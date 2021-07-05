@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>RaaLabs.Edge.ModuleTemplate</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="AzureIoTEdgeModule"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RaaLabs.Edge" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.EventHandling" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.Configuration" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.EdgeHub" Version="1.4.1"/>
+  </ItemGroup>
+</Project>
