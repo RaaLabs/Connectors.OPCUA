@@ -5,11 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 using RaaLabs.Edge.Modules.Configuration;
 
 
-namespace RaaLabs.Edge.ModuleTemplate
+namespace RaaLabs.Edge.Connectors.OPCUA
 {
     [Name("configuration.json")]
     [RestartOnChange]
-    public class ModuleTemplateConfiguration : IConfiguration
+    public class OPCUAConfiguration : IConfiguration
     {
         public int SampleConfigValue { get; set; }
     }

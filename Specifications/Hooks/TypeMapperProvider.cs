@@ -3,8 +3,9 @@
 
 using TechTalk.SpecFlow;
 using RaaLabs.Edge.Testing;
+using RaaLabs.Edge.Connectors.OPCUA.Events;
 
-namespace RaaLabs.Edge.ModuleTemplate.Specs.Hooks
+namespace RaaLabs.Edge.Connectors.OPCUA.Specs.Hooks
 {
     [Binding]
     public sealed class TypeMapperProvider
@@ -19,9 +20,9 @@ namespace RaaLabs.Edge.ModuleTemplate.Specs.Hooks
         [BeforeScenario]
         public void SetupTypes()
         {
-            _typeMapping.Add("ModuleTemplateHandler", typeof(ModuleTemplateHandler));
-            _typeMapping.Add("ModuleTemplateDatapointInput", typeof(Events.ModuleTemplateDatapointInput));
-            _typeMapping.Add("ModuleTemplateDatapointOutput", typeof(Events.ModuleTemplateDatapointOutput));
+            _typeMapping.Add("OPCUAHandler", typeof(OPCUAHandler));
+            _typeMapping.Add("OPCUADatapointInput", typeof(OPCUADatapointInput));
+            _typeMapping.Add("OPCUADatapointOutput", typeof(OPCUADatapointOutput));
         }
     }
 }

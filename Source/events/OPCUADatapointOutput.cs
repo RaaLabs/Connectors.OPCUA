@@ -5,14 +5,13 @@ using System;
 using RaaLabs.Edge.Modules.EdgeHub;
 
 
-namespace RaaLabs.Edge.ModuleTemplate.Events
+namespace RaaLabs.Edge.Connectors.OPCUA.Events
 {
     /// <summary>
-    /// The data point received. Could be a different format than what is specified in this
-    /// sample. This is an example for a module that is placed after IdentityMapper
+    /// The data point on the format it should be sent to EdgeHub.
     /// </summary>
-    [InputName("events")]
-    public class ModuleTemplateDatapointInput : IEdgeHubIncomingEvent
+    [OutputName("output")]
+    public class OPCUADatapointOutput : IEdgeHubOutgoingEvent
     {
         /// <summary>
         /// The time series id

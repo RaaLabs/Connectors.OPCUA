@@ -7,7 +7,7 @@ using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
 
 
-namespace RaaLabs.Edge.ModuleTemplate
+namespace RaaLabs.Edge.Connectors.OPCUA
 {
     [ExcludeFromCodeCoverage]
     class Program
@@ -18,7 +18,7 @@ namespace RaaLabs.Edge.ModuleTemplate
                 .WithModule<EventHandling>()
                 .WithModule<Configuration>()
                 .WithModule<EdgeHub>()
-                .WithHandler<ModuleTemplateHandler>()
+                .WithHandler<OPCUAHandler>()
                 .Build();
 
             application.Run().Wait();

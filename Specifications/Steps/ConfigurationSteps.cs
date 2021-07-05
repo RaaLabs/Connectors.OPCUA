@@ -1,9 +1,9 @@
 using BoDi;
-using System.Linq;
 using TechTalk.SpecFlow;
-using System.Globalization;
+using RaaLabs.Edge.Connectors.OPCUA;
 
-namespace RaaLabs.Edge.ModuleTemplate.Specs.Steps
+
+namespace RaaLabs.Edge.Connectors.OPCUA.Specs.Steps
 {
     [Binding]
     public sealed class ConfigurationSteps
@@ -18,11 +18,11 @@ namespace RaaLabs.Edge.ModuleTemplate.Specs.Steps
         [Given(@"(.*) as sample config value")]
         public void GivenThePrioritizedTags(string sampleConfigValue)
         {
-            var moduleTemplateConfiguration = new ModuleTemplateConfiguration
+            var OPCUAConfiguration = new OPCUAConfiguration
             {
                 SampleConfigValue = int.Parse(sampleConfigValue)
             };
-            _container.RegisterInstanceAs<ModuleTemplateConfiguration>(moduleTemplateConfiguration);
+            _container.RegisterInstanceAs<OPCUAConfiguration>(OPCUAConfiguration);
         }
     }
 }

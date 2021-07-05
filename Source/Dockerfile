@@ -18,4 +18,4 @@ COPY --from=build-env /app/Source/out ./
 RUN adduser -Ds /bin/sh moduleuser	
 USER moduleuser
 
-ENTRYPOINT ["dotnet", "RaaLabs.Edge.ModuleTemplate.dll"]
+ENTRYPOINT ["dotnet", "RaaLabs.Edge.Connectors.OPCUA.dll"]

@@ -3,14 +3,15 @@
 
 using System;
 using TechTalk.SpecFlow;
+using RaaLabs.Edge.Connectors.OPCUA.Events;
 
-namespace RaaLabs.Edge.ModuleTemplate.Specs.Drivers
+namespace RaaLabs.Edge.Connectors.OPCUA.Specs.Drivers
 {
-    class IncomingDataPointInstanceFactory : IEventInstanceFactory<Events.ModuleTemplateDatapointInput>
+    class IncomingDataPointInstanceFactory : IEventInstanceFactory<OPCUADatapointInput>
     {
-        public Events.ModuleTemplateDatapointInput FromTableRow(TableRow row)
+        public OPCUADatapointInput FromTableRow(TableRow row)
         {
-            var dataPoint = new Events.ModuleTemplateDatapointInput
+            var dataPoint = new OPCUADatapointInput
             {
                 TimeSeries = Guid.Parse(row["TimeSeries"]),
                 Value = float.Parse(row["Value"]),

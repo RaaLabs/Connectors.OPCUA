@@ -2,7 +2,7 @@ name: .NET 5.0
 
 env:
   PRERELEASE_BRANCHES: experimental,alpha,beta,rc
-  DOCKER_HUB_REPO: raaedge.azurecr.io/module-template
+  DOCKER_HUB_REPO: raaedge.azurecr.io/connectors-opcua
   COVERAGE_FOLDER: Coverage
 
 on:

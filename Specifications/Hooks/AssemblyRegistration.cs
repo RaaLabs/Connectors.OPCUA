@@ -4,7 +4,7 @@
 using RaaLabs.Edge.Testing;
 using TechTalk.SpecFlow;
 
-namespace RaaLabs.Edge.ModuleTemplate.Specs.Hooks
+namespace RaaLabs.Edge.Connectors.OPCUA.Specs.Hooks
 {
     [Binding]
     class AssemblyRegistration

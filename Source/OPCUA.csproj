@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>RaaLabs.Edge.ModuleTemplate</AssemblyName>
+    <AssemblyName>RaaLabs.Edge.Connectors.OPCUA</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectCapability Include="AzureIoTEdgeModule"/>

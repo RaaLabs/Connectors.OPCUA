@@ -1,17 +1,17 @@
 // Copyright (c) RaaLabs. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using TechTalk.SpecFlow;
 using FluentAssertions;
 using System.Globalization;
-//using RaaLabs.Edge.ModuleTemplate.Events;
-using System;
+using RaaLabs.Edge.Connectors.OPCUA.Events;
 
-namespace RaaLabs.Edge.ModuleTemplate.Specs.Drivers
+namespace RaaLabs.Edge.Connectors.OPCUA.Specs.Drivers
 {
-    class OutgoingDataPointVerifier : IProducedEventVerifier<Events.ModuleTemplateDatapointOutput>
+    class OutgoingDataPointVerifier : IProducedEventVerifier<OPCUADatapointOutput>
     {
-        public void VerifyFromTableRow(Events.ModuleTemplateDatapointOutput @event, TableRow row)
+        public void VerifyFromTableRow(OPCUADatapointOutput @event, TableRow row)
         {
             double actualValue = @event.Value;
             var expectedValue = float.Parse(row["Value"], CultureInfo.InvariantCulture.NumberFormat);
