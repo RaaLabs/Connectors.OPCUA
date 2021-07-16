@@ -18,7 +18,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 .WithModule<EventHandling>()
                 .WithModule<Configuration>()
                 .WithModule<EdgeHub>()
-                .WithHandler<OPCUAHandler>()
+                .WithTask<OPCUAConnector>()
                 .Build();
 
             application.Run().Wait();
