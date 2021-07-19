@@ -155,10 +155,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 {
                     _logger.Information("Read Value = {0} , StatusCode = {1}", result.Value, result.StatusCode);
                 }
-
-                _logger.Information("Reading Value of NamespaceArray node...");
-                DataValue namespaceArray = _session.ReadValue(Variables.Server_NamespaceArray);
-                _logger.Information($"NamespaceArray Value = {namespaceArray}");
             }
             catch (Exception ex)
             {
