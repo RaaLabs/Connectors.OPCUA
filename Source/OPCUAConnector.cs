@@ -1,10 +1,9 @@
 // Copyright (c) RaaLabs. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
 
 using System;
 using Serilog;
 using System.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
 using Polly;
 using Opc.Ua;
@@ -43,7 +42,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             var config = new ApplicationConfiguration()
             {
                 ApplicationName = "Raa Labs OPC UA connector",
-                ApplicationUri = Utils.Format(@"urn:{0}:" + "Raa Labs OPC UA connector" + "", "Rafaels-MacBook-Pro.local"),
+                ApplicationUri = Utils.Format(@"urn:{0}:" + "Raa Labs OPC UA connector" + "", ""),
                 ApplicationType = ApplicationType.Client,
                 TransportConfigurations = new TransportConfigurationCollection(),
                 TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
@@ -67,7 +66,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             {
                 var policy = Policy
                     .Handle<Exception>()
-                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
+                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt), 3600)),
                     (exception, timeSpan, context) =>
                     {
                         _logger.Error(exception, $"OPC UA connector threw an exception during connect - retrying");
@@ -77,7 +76,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 {
                     await ConnectOPCUA();
                 });
-                
+
                 await Task.Delay(1000);
             }
         }

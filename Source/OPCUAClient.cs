@@ -1,5 +1,5 @@
 // Copyright (c) RaaLabs. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections;
@@ -77,8 +77,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             }
             catch (Exception ex)
             {
-                // Log Error
-                _logger.Error($"Create Session Error : {ex.Message}");
+                _logger.Error($"Create Session Error : {ex.ToString()}");
                 return false;
             }
         }
@@ -144,9 +143,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             }
 
             var resultsValuesGroups = Split(resultsValues);
-            _logger.Information(resultsValuesGroups.Count().ToString());
             List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
-            _logger.Information(outputs.Count().ToString());
 
             foreach (var output in outputs)
             {
@@ -206,6 +203,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="DataValue"></typeparam>
+        /// <returns></returns>
         private static List<List<DataValue>> Split<DataValue>(List<DataValue> source)
         {
             return source
