@@ -18,6 +18,9 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// </summary>
     public class OPCUAConnector : IRunAsync, IProduceEvent<Events.OPCUADatapointOutput>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public event EventEmitter<Events.OPCUADatapointOutput> SendDatapoint;
         private OPCUAClient _opcuaClient;
         private readonly ApplicationInstance _opcuaAppInstance;

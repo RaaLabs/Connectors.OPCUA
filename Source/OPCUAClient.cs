@@ -120,6 +120,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             ReadValueIdCollection nodesToRead = new ReadValueIdCollection(){};
             foreach (var nodeId in _opcuaConfiguration.NodeIds)
             {
+                // Because nodeId and value cannot be read using the same ReadValueId, but nodeId and value are required 
                 nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.NodeId });
                 nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.Value });
             }
@@ -131,23 +132,18 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 0,
                 TimestampsToReturn.Both,
                 nodesToRead,
-                out DataValueCollection resultsValues,
+                out DataValueCollection resultsValues, // DataValueCollection is ordered
                 out DiagnosticInfoCollection diagnosticInfos
             );
 
             _validateResponse(resultsValues, nodesToRead);
-
-            foreach (DataValue result in resultsValues)
-            {
-                _logger.Information("Read Value = {0} , StatusCode = {1}, Timestamp = {2}", result.Value, result.StatusCode, result.ServerTimestamp);
-            }
 
             var resultsValuesGroups = Split(resultsValues);
             List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
 
             foreach (var output in outputs)
             {
-                _logger.Information("Source = {0} , Tag = {1}, Value = {2} Timestamp = {3}", output.Source, output.Tag, output.Value, output.Timestamp);
+                _logger.Information("OPC UA data read: Source: {0} , Tag (NodeId): {1}, Value: {2} Timestamp: {3}", output.Source, output.Tag, output.Value, output.Timestamp);
             }
 
             return outputs;
@@ -182,6 +178,11 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             e.AcceptAll = certificateAccepted;
         }
 
+        /// <summary>
+        /// Creates a List<Events.OPCUADatapointOutput> based on two ReadValueIds, one with the value and one with the nodeId.
+        /// </summary>
+        /// <param name="resultsValuesGroups"></param>
+        /// <returns></returns>
         private List<Events.OPCUADatapointOutput> FormatOutput(List<List<DataValue>> resultsValuesGroups)
         {
             List<Events.OPCUADatapointOutput> datapoints = new List<Events.OPCUADatapointOutput>();
@@ -204,11 +205,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
 
         /// <summary>
-        /// 
+        /// Groups a List<DataValue> into a List<List<DataValue>> each with two DataValues, one for the nodeId and one for the value.
         /// </summary>
-        /// <param name="source"></param>
-        /// <typeparam name="DataValue"></typeparam>
-        /// <returns></returns>
         private static List<List<DataValue>> Split<DataValue>(List<DataValue> source)
         {
             return source
