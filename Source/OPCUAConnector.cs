@@ -3,12 +3,12 @@
 
 using System;
 using Serilog;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using RaaLabs.Edge.Modules.EventHandling;
+using Polly;
 using Opc.Ua;
-using Opc.Ua.Client;
 using Opc.Ua.Configuration;
+using RaaLabs.Edge.Modules.EventHandling;
+
 
 namespace RaaLabs.Edge.Connectors.OPCUA
 {
@@ -17,14 +17,10 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// </summary>
     public class OPCUAConnector : IRunAsync, IProduceEvent<Events.OPCUADatapointInput>
     {
-        /// <inheritdoc/>
-
         public event EventEmitter<Events.OPCUADatapointInput> OPCUAReceived;
+        private OPCUAClient _opcuaClient;
+        private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
-        private Session session;
-        private SessionReconnectHandler reconnectHandler;
-        private const int ReconnectPeriod = 10;
-        OPCUAClient opcuaClient;
 
         /// <summary>
         /// Initializes a new instance of <see cref="OPCUAConnector"/>
@@ -33,12 +29,75 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         public OPCUAConnector(ILogger logger)
         {
             _logger = logger;
+            var securityConfig = new SecurityConfiguration()
+            {
+                AutoAcceptUntrustedCertificates = true // ONLY for debugging/early dev
+            };
 
+            var config = new ApplicationConfiguration()
+            {
+                ApplicationName = "Raa Labs OPC UA connector",
+                ApplicationUri = Utils.Format(@"urn:{0}:" + "Raa Labs OPC UA connector" + "", "Rafaels-MacBook-Pro.local"),
+                ApplicationType = ApplicationType.Client,
+                TransportConfigurations = new TransportConfigurationCollection(),
+                TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 60000 },
+                TraceConfiguration = new TraceConfiguration(),
+                SecurityConfiguration = securityConfig
+            };
+
+            _opcuaAppInstance = new ApplicationInstance()
+            {
+                ApplicationName = "Raa Labs OPC UA connector",
+                ApplicationType = ApplicationType.Client,
+                ApplicationConfiguration = config
+            };
         }
 
         public async Task Run()
         {
-            opcuaClient = new OPCUAClient("Rafaels-MacBook-Pro.local", "53530", true, 1, "2");
+            _logger.Information("Raa Labs OPC UA connector");
+            while (true)
+            {
+                var policy = Policy
+                    .Handle<Exception>()
+                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
+                    (exception, timeSpan, context) =>
+                    {
+                        _logger.Error(exception, $"OPC UA connector threw an exception during connect - retrying");
+                    });
+
+                await policy.ExecuteAsync(async () =>
+                {
+                    await ConnectOPCUA();
+                });
+                
+                _logger.Information("Waiting 1 sec ...");
+                await Task.Delay(1000);
+            }
+        }
+
+        private async Task ConnectOPCUA()
+        {
+            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _logger, ClientBase.ValidateResponse);
+
+            try
+            {
+                bool connected = await _opcuaClient.ConnectAsync();
+                if (connected)
+                {
+                    _opcuaClient.ReadNodes();
+                    _opcuaClient.Disconnect();
+                }
+                else
+                {
+                    _logger.Information("Could not connect to server!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Information(ex.Message);
+            }
         }
     }
 }

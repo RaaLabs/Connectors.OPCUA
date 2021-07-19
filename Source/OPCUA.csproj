@@ -16,5 +16,6 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.4.366.38"/>
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.4.366.38"/>
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.366.38"/>
+    <PackageReference Include="Polly" Version="7.2.2"/>
   </ItemGroup>
 </Project>
