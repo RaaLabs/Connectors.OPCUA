@@ -78,7 +78,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                     await ConnectOPCUA();
                 });
                 
-                _logger.Information("Waiting 1 sec ...");
                 await Task.Delay(1000);
             }
         }
@@ -92,20 +91,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 bool connected = await _opcuaClient.ConnectAsync();
                 if (connected)
                 {
-                    IEnumerable<DataValue> opcuaDataValues = _opcuaClient.ReadNodes();
+                    List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes();
                     _opcuaClient.Disconnect();
 
-                    foreach (var opcuaDataValue in opcuaDataValues)
+                    foreach (var opcuaDatapoint in opcuaDatapoints)
                     {
-                        var opcuaReceived = new Events.OPCUADatapointOutput
-                        {
-                            Source = "OPCUA",
-                            Tag = "",
-                            Timestamp = new long(),
-                            Value = ""
-                        };
-
-                        SendDatapoint(opcuaReceived);
+                        SendDatapoint(opcuaDatapoint);
                     }
                 }
                 else
@@ -115,7 +106,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             }
             catch (Exception ex)
             {
-                _logger.Information(ex.Message);
+                _logger.Information(ex.ToString());
             }
         }
     }

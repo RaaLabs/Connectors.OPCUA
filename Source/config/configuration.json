@@ -2,8 +2,6 @@
     "serverUrl": "opc.tcp://Rafaels-MacBook-Pro.local:53530/OPCUA/SimulationServer",
     "nodeIds": [
         "ns=3;i=1002",
-        "ns=3;i=1002",
-        "ns=3;i=1001",
         "ns=3;i=1001"
     ]
 }

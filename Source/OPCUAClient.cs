@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
+using System.Linq;
 using Opc.Ua;
 using Opc.Ua.Client;
 
@@ -16,11 +17,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// </summary>
     class OPCUAClient
     {
-        /// <summary>
-        /// Gets the client session.
-        /// </summary>
-        public Session Session => _session;
-
         public OPCUAConfiguration _opcuaConfiguration;
         private ApplicationConfiguration _applicationConfiguration;
         private Session _session;
@@ -120,15 +116,14 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// <summary>
         /// Read a list of nodes from Server
         /// </summary>
-        public IEnumerable<DataValue> ReadNodes()
+        public List<Events.OPCUADatapointOutput> ReadNodes()
         {
-            ReadValueIdCollection nodesToRead = new ReadValueIdCollection()
+            ReadValueIdCollection nodesToRead = new ReadValueIdCollection(){};
+            foreach (var nodeId in _opcuaConfiguration.NodeIds)
             {
-                new ReadValueId() { NodeId = "ns=3;i=1002", AttributeId = Attributes.NodeId },
-                new ReadValueId() { NodeId = "ns=3;i=1002", AttributeId = Attributes.Value },
-                new ReadValueId() { NodeId = "ns=3;i=1001", AttributeId = Attributes.NodeId },
-                new ReadValueId() { NodeId = "ns=3;i=1001", AttributeId = Attributes.Value }
-            };
+                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.NodeId });
+                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.Value });
+            }
 
             _logger.Information("Reading nodes...");
 
@@ -148,7 +143,17 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 _logger.Information("Read Value = {0} , StatusCode = {1}, Timestamp = {2}", result.Value, result.StatusCode, result.ServerTimestamp);
             }
 
-            return resultsValues;
+            var resultsValuesGroups = Split(resultsValues);
+            _logger.Information(resultsValuesGroups.Count().ToString());
+            List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
+            _logger.Information(outputs.Count().ToString());
+
+            foreach (var output in outputs)
+            {
+                _logger.Information("Source = {0} , Tag = {1}, Value = {2} Timestamp = {3}", output.Source, output.Tag, output.Value, output.Timestamp);
+            }
+
+            return outputs;
         }
 
         /// <summary>
@@ -178,6 +183,36 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             }
 
             e.AcceptAll = certificateAccepted;
+        }
+
+        private List<Events.OPCUADatapointOutput> FormatOutput(List<List<DataValue>> resultsValuesGroups)
+        {
+            List<Events.OPCUADatapointOutput> datapoints = new List<Events.OPCUADatapointOutput>();
+
+            foreach (var resultValueGroup in resultsValuesGroups)
+            {
+                var opcuaDatapointOutput = new Events.OPCUADatapointOutput
+                {
+                    Source = "OPCUA",
+                    Tag = resultValueGroup[0].Value.ToString(), // this is the node id
+                    Timestamp = ((DateTimeOffset)resultValueGroup[0].ServerTimestamp).ToUnixTimeMilliseconds(),
+                    Value = resultValueGroup[1].Value.ToString() // this is the node value
+                };
+
+                datapoints.Add(opcuaDatapointOutput);
+            }
+            
+            return datapoints;
+        }
+
+
+        private static List<List<DataValue>> Split<DataValue>(List<DataValue> source)
+        {
+            return source
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / 2)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
         }
     }
 }
