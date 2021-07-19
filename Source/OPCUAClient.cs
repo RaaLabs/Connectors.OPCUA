@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
 using Opc.Ua;
@@ -20,12 +21,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         public Session Session => _session;
 
-        /// <summary>
-        /// Gets the server URL.
-        /// </summary>
-        public string ServerUrl { get; } = "opc.tcp://Rafaels-MacBook-Pro.local:53530/OPCUA/SimulationServer";
-
-        private ApplicationConfiguration _configuration;
+        public OPCUAConfiguration _opcuaConfiguration;
+        private ApplicationConfiguration _applicationConfiguration;
         private Session _session;
         private readonly ILogger _logger;
         private readonly Action<IList, IList> _validateResponse;
@@ -33,12 +30,13 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// <summary>
         /// Initializes a new instance of <see cref="OPCUAClient".
         /// </summary>
-        public OPCUAClient(ApplicationConfiguration configuration, ILogger logger, Action<IList, IList> validateResponse)
+        public OPCUAClient(ApplicationConfiguration applicationConfiguration, OPCUAConfiguration opcuaConfiguration, ILogger logger, Action<IList, IList> validateResponse)
         {
             _validateResponse = validateResponse;
             _logger = logger;
-            _configuration = configuration;
-            _configuration.CertificateValidator.CertificateValidation += CertificateValidation;
+            _opcuaConfiguration = opcuaConfiguration;
+            _applicationConfiguration = applicationConfiguration;
+            _applicationConfiguration.CertificateValidator.CertificateValidation += CertificateValidation;
         }
 
         /// <summary>
@@ -56,16 +54,16 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 {
                     _logger.Information("Connecting...");
 
-                    EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(ServerUrl, false);
-                    EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(_configuration);
+                    EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(_opcuaConfiguration.ServerUrl, false);
+                    EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(_applicationConfiguration);
                     ConfiguredEndpoint endpoint = new ConfiguredEndpoint(null, endpointDescription, endpointConfiguration);
 
                     Session session = await Session.Create(
-                        _configuration,
+                        _applicationConfiguration,
                         endpoint,
                         false,
                         false,
-                        _configuration.ApplicationName,
+                        _applicationConfiguration.ApplicationName,
                         30 * 60 * 1000,
                         new UserIdentity(),
                         null
@@ -122,44 +120,35 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// <summary>
         /// Read a list of nodes from Server
         /// </summary>
-        public void ReadNodes()
+        public IEnumerable<DataValue> ReadNodes()
         {
-            if (_session == null || _session.Connected == false)
+            ReadValueIdCollection nodesToRead = new ReadValueIdCollection()
             {
-                _logger.Information("Session not connected!");
-                return;
+                new ReadValueId() { NodeId = "ns=3;i=1002", AttributeId = Attributes.NodeId },
+                new ReadValueId() { NodeId = "ns=3;i=1002", AttributeId = Attributes.Value },
+                new ReadValueId() { NodeId = "ns=3;i=1001", AttributeId = Attributes.NodeId },
+                new ReadValueId() { NodeId = "ns=3;i=1001", AttributeId = Attributes.Value }
+            };
+
+            _logger.Information("Reading nodes...");
+
+            _session.Read(
+                null,
+                0,
+                TimestampsToReturn.Both,
+                nodesToRead,
+                out DataValueCollection resultsValues,
+                out DiagnosticInfoCollection diagnosticInfos
+            );
+
+            _validateResponse(resultsValues, nodesToRead);
+
+            foreach (DataValue result in resultsValues)
+            {
+                _logger.Information("Read Value = {0} , StatusCode = {1}, Timestamp = {2}", result.Value, result.StatusCode, result.ServerTimestamp);
             }
 
-            try
-            {
-                ReadValueIdCollection nodesToRead = new ReadValueIdCollection()
-                {
-                    new ReadValueId() { NodeId = "ns=3;i=1002", AttributeId = Attributes.Value },
-                    new ReadValueId() { NodeId = "ns=3;i=1001", AttributeId = Attributes.Value }
-                };
-
-                _logger.Information("Reading nodes...");
-
-                _session.Read(
-                    null,
-                    0,
-                    TimestampsToReturn.Both,
-                    nodesToRead,
-                    out DataValueCollection resultsValues,
-                    out DiagnosticInfoCollection diagnosticInfos
-                );
-
-                _validateResponse(resultsValues, nodesToRead);
-
-                foreach (DataValue result in resultsValues)
-                {
-                    _logger.Information("Read Value = {0} , StatusCode = {1}", result.Value, result.StatusCode);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Information($"Read Nodes Error : {ex.Message}.");
-            }
+            return resultsValues;
         }
 
         /// <summary>

@@ -4,6 +4,8 @@
 using System;
 using Serilog;
 using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
 using Polly;
 using Opc.Ua;
 using Opc.Ua.Configuration;
@@ -15,20 +17,24 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// <summary>
     /// Represents an implementation for <see cref="IProduceEvent"/>
     /// </summary>
-    public class OPCUAConnector : IRunAsync, IProduceEvent<Events.OPCUADatapointInput>
+    public class OPCUAConnector : IRunAsync, IProduceEvent<Events.OPCUADatapointOutput>
     {
-        public event EventEmitter<Events.OPCUADatapointInput> OPCUAReceived;
+        public event EventEmitter<Events.OPCUADatapointOutput> SendDatapoint;
         private OPCUAClient _opcuaClient;
         private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
+        private readonly OPCUAConfiguration _opcuaConfiguration;
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="OPCUAConnector"/>
         /// </summary>
         /// <param name="logger"><see cref="ILogger"/> for logging</param>
-        public OPCUAConnector(ILogger logger)
+        public OPCUAConnector(ILogger logger, OPCUAConfiguration opcuaConfiguration)
         {
             _logger = logger;
+            _opcuaConfiguration = opcuaConfiguration;
+
             var securityConfig = new SecurityConfiguration()
             {
                 AutoAcceptUntrustedCertificates = true // ONLY for debugging/early dev
@@ -79,15 +85,28 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
         private async Task ConnectOPCUA()
         {
-            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _logger, ClientBase.ValidateResponse);
+            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
 
             try
             {
                 bool connected = await _opcuaClient.ConnectAsync();
                 if (connected)
                 {
-                    _opcuaClient.ReadNodes();
+                    IEnumerable<DataValue> opcuaDataValues = _opcuaClient.ReadNodes();
                     _opcuaClient.Disconnect();
+
+                    foreach (var opcuaDataValue in opcuaDataValues)
+                    {
+                        var opcuaReceived = new Events.OPCUADatapointOutput
+                        {
+                            Source = "OPCUA",
+                            Tag = "",
+                            Timestamp = new long(),
+                            Value = ""
+                        };
+
+                        SendDatapoint(opcuaReceived);
+                    }
                 }
                 else
                 {
