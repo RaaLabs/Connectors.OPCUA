@@ -14,17 +14,22 @@ namespace RaaLabs.Edge.Connectors.OPCUA.Events
     public class OPCUADatapointOutput : IEdgeHubOutgoingEvent
     {
         /// <summary>
-        /// The time series id
+        /// Represents the Source system.
         /// </summary>
-        public Guid TimeSeries { get; set; }
+        public string Source { get; set; }
 
         /// <summary>
-        /// The value of the data point
+        /// Gets or sets the tag. Represens the sensor name from the source system.
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// The value of the value.
         /// </summary>
         public dynamic Value { get; set; }
 
         /// <summary>
-        /// The timestamp, represented as epoc time with milliseconds
+        /// Gets or sets the timestamp in the form of EPOCH milliseconds granularity.
         /// </summary>
         public long Timestamp { get; set; }
     }
