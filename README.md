@@ -1,5 +1,7 @@
 # Connectors.OPCUA
 [![.NET 5.0](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUS&metric=sqale_rating&token=e4bcfead7b43c0880d1da3a9e48ed9bbb6f7f58f)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUA&metric=coverage&token=e4bcfead7b43c0880d1da3a9e48ed9bbb6f7f58f)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
 
 This document describes the Connectors.OPCUA module for RaaLabs Edge.
 
