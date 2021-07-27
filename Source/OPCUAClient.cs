@@ -193,7 +193,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 {
                     Source = "OPCUA",
                     Tag = resultValueGroup[0].Value.ToString(), // this is the node id
-                    Timestamp = ((DateTimeOffset)resultValueGroup[0].ServerTimestamp).ToUnixTimeMilliseconds(),
+                    Timestamp = ((DateTimeOffset)resultValueGroup[1].ServerTimestamp).ToUnixTimeMilliseconds(),
                     Value = resultValueGroup[1].Value.ToString() // this is the node value
                 };
 

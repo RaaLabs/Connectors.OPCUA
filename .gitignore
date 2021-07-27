@@ -279,3 +279,4 @@ __pycache__/
 Artifacts/
 
 *.feature.cs
+*.DS_Store
