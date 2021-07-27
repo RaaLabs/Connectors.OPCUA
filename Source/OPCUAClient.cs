@@ -141,11 +141,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             var resultsValuesGroups = Split(resultsValues);
             List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
 
-            foreach (var output in outputs)
-            {
-                _logger.Information("OPC UA data read: Source: {0} , Tag (NodeId): {1}, Value: {2} Timestamp: {3}", output.Source, output.Tag, output.Value, output.Timestamp);
-            }
-
             return outputs;
         }
 
