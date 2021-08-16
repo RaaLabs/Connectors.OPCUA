@@ -65,6 +65,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         public async Task Run()
         {
             _logger.Information("Raa Labs OPC UA connector");
+            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
+
             while (true)
             {
                 var policy = Policy
@@ -86,8 +88,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
         private async Task ConnectOPCUA()
         {
-            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
-
             try
             {
                 bool connected = await _opcuaClient.ConnectAsync();
