@@ -23,6 +23,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         public event EventEmitter<Events.OPCUADatapointOutput> SendDatapoint;
         private OPCUAClient _opcuaClient;
+        private ReadValueIdCollection _nodesToRead;
         private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
         private readonly OPCUAConfiguration _opcuaConfiguration;
@@ -60,6 +61,21 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 ApplicationType = ApplicationType.Client,
                 ApplicationConfiguration = config
             };
+
+            _nodesToRead = InitializeReadValueIdCollection();
+        }
+
+        private ReadValueIdCollection InitializeReadValueIdCollection()
+        {
+            ReadValueIdCollection nodesToRead = new ReadValueIdCollection(){};
+            foreach (var nodeId in _opcuaConfiguration.NodeIds)
+            {
+                // Because nodeId and value cannot be read using the same ReadValueId, but nodeId and value are required 
+                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.NodeId });
+                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.Value });
+            }
+
+            return nodesToRead;
         }
 
         public async Task Run()
@@ -93,7 +109,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 bool connected = await _opcuaClient.ConnectAsync();
                 if (connected)
                 {
-                    List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes();
+                    List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
                     _opcuaClient.Disconnect();
 
                     foreach (var opcuaDatapoint in opcuaDatapoints)

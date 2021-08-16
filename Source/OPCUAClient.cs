@@ -115,28 +115,20 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// <summary>
         /// Read a list of nodes from Server
         /// </summary>
-        public List<Events.OPCUADatapointOutput> ReadNodes()
+        public List<Events.OPCUADatapointOutput> ReadNodes(ReadValueIdCollection nodes)
         {
-            ReadValueIdCollection nodesToRead = new ReadValueIdCollection(){};
-            foreach (var nodeId in _opcuaConfiguration.NodeIds)
-            {
-                // Because nodeId and value cannot be read using the same ReadValueId, but nodeId and value are required 
-                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.NodeId });
-                nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.Value });
-            }
-
             _logger.Information("Reading nodes...");
 
             _session.Read(
                 null,
                 0,
                 TimestampsToReturn.Both,
-                nodesToRead,
+                nodes,
                 out DataValueCollection resultsValues, // DataValueCollection is ordered
                 out DiagnosticInfoCollection diagnosticInfos
             );
 
-            _validateResponse(resultsValues, nodesToRead);
+            _validateResponse(resultsValues, nodes);
 
             var resultsValuesGroups = Split(resultsValues);
             List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
