@@ -9,6 +9,7 @@ using Serilog;
 using System.Linq;
 using Opc.Ua;
 using Opc.Ua.Client;
+using MoreLinq;
 
 namespace RaaLabs.Edge.Connectors.OPCUA
 {
@@ -130,7 +131,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
             _validateResponse(resultsValues, nodes);
 
-            var resultsValuesGroups = Split(resultsValues);
+            var resultsValuesGroups = resultsValues.Batch(2);
             List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
 
             return outputs;
@@ -170,37 +171,25 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         /// <param name="resultsValuesGroups"></param>
         /// <returns></returns>
-        private List<Events.OPCUADatapointOutput> FormatOutput(List<List<DataValue>> resultsValuesGroups)
+        private List<Events.OPCUADatapointOutput> FormatOutput(IEnumerable<IEnumerable<DataValue>> resultsValuesGroups)
         {
             List<Events.OPCUADatapointOutput> datapoints = new List<Events.OPCUADatapointOutput>();
+
 
             foreach (var resultValueGroup in resultsValuesGroups)
             {
                 var opcuaDatapointOutput = new Events.OPCUADatapointOutput
                 {
                     Source = "OPCUA",
-                    Tag = resultValueGroup[0].Value.ToString(), // this is the node id
-                    Timestamp = ((DateTimeOffset)resultValueGroup[1].ServerTimestamp).ToUnixTimeMilliseconds(),
-                    Value = resultValueGroup[1].Value.ToString() // this is the node value
+                    Tag = resultValueGroup.ElementAt(0).Value.ToString(), // this is the node id
+                    Timestamp = ((DateTimeOffset)resultValueGroup.ElementAt(1).ServerTimestamp).ToUnixTimeMilliseconds(),
+                    Value = resultValueGroup.ElementAt(1).Value.ToString() // this is the node value
                 };
 
                 datapoints.Add(opcuaDatapointOutput);
             }
             
             return datapoints;
-        }
-
-
-        /// <summary>
-        /// Groups a List<DataValue> into a List<List<DataValue>> each with two DataValues, one for the nodeId and one for the value.
-        /// </summary>
-        private static List<List<DataValue>> Split<DataValue>(List<DataValue> source)
-        {
-            return source
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index / 2)
-                .Select(x => x.Select(v => v.Value).ToList())
-                .ToList();
         }
     }
 }
