@@ -19,12 +19,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA.Events
         public string Source { get; set; }
 
         /// <summary>
-        /// Gets or sets the tag. Represens the sensor name from the source syste, OPC UA node id, consisting of namespace index and identifier, e.g. "ns=3;i=1002".
+        /// Gets or sets the tag. Represents the sensor name from the source system, OPC UA node id, consisting of namespace index and identifier, e.g. "ns=3;i=1002".
         /// </summary>
         public string Tag { get; set; }
 
         /// <summary>
-        /// The value of the value.
+        /// The value of the sensor reading.
         /// </summary>
         public dynamic Value { get; set; }
 

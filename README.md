@@ -15,7 +15,7 @@ The module is configured using a JSON file. `connector.json` represents the conn
 
 ```json
 {
-    "serverUrl": "opc.tcp://Rafaels-MacBook-Pro.local:53530/OPCUA/SimulationServer",
+    "serverUrl": "opc.tcp://<HOST>:<PORT>/<SERVERNAME>",
     "nodeIds": [
         "ns=3;i=1002",
         "ns=3;i=1001"
