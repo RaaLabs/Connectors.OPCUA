@@ -1,3 +1,7 @@
 {
-    "sampleConfigValue": 42 
+    "serverUrl": "opc.tcp://<HOST>:<PORT>/<SERVERNAME>",
+    "nodeIds": [
+        "ns=3;i=1002",
+        "ns=3;i=1001"
+    ]
 }

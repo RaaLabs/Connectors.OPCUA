@@ -1,5 +1,5 @@
 ﻿// Copyright (c) RaaLabs. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
 using RaaLabs.Edge.Modules.EventHandling;
@@ -7,7 +7,7 @@ using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
 
 
-namespace RaaLabs.Edge.ModuleTemplate
+namespace RaaLabs.Edge.Connectors.OPCUA
 {
     [ExcludeFromCodeCoverage]
     class Program
@@ -18,7 +18,7 @@ namespace RaaLabs.Edge.ModuleTemplate
                 .WithModule<EventHandling>()
                 .WithModule<Configuration>()
                 .WithModule<EdgeHub>()
-                .WithHandler<ModuleTemplateHandler>()
+                .WithTask<OPCUAConnector>()
                 .Build();
 
             application.Run().Wait();

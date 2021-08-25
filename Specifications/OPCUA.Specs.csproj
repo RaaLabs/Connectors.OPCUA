@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>RaaLabs.Edge.ModuleTemplate.Specs</RootNamespace>
-    <AssemblyName>RaaLabs.Edge.ModuleTemplate.Specs</AssemblyName>
+    <AssemblyName>RaaLabs.Edge.Connectors.OPCUA.Specs</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Source\ModuleTemplate.csproj" />
+    <ProjectReference Include="..\Source\OPCUA.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,8 +32,8 @@
     <Compile Update="Features\DataPointExtensions.feature.cs">
       <DependentUpon>DataPointExtensions.feature</DependentUpon>
     </Compile>
-    <Compile Update="Features\ModuleTemplate.feature.cs">
-      <DependentUpon>ModuleTemplate.feature</DependentUpon>
+    <Compile Update="Features\OPCUA.feature.cs">
+      <DependentUpon>OPCUA.feature</DependentUpon>
     </Compile>
     <Compile Update="Steps\DataPointExtensionsSteps.cs">
       <SubType>Code</SubType>
@@ -50,7 +49,7 @@
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
     </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\ModuleTemplate.feature">
+    <SpecFlowFeatureFiles Update="Features\OPCUA.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
     </SpecFlowFeatureFiles>

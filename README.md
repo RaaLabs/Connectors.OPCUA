@@ -1,18 +1,94 @@
-# Edge.ModuleTemplate
-[![.NET 5.0](https://github.com/RaaLabs/Edge.ModuleTemplate/actions/workflows/dotnet.yml/badge.svg)](https://github.com/RaaLabs/Edge.ModuleTemplate/actions/workflows/dotnet.yml)
+# Connectors.OPCUA
+[![.NET 5.0](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUS&metric=sqale_rating&token=e4bcfead7b43c0880d1da3a9e48ed9bbb6f7f58f)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUA&metric=coverage&token=e4bcfead7b43c0880d1da3a9e48ed9bbb6f7f58f)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
 
-The template can be used to initialize new Raa Labs Edge modules. To use it in new repos, select
-it as the "Template Repository" in the dialog that opens when creating a new GitHub repo. All files will be present in the newly created repo.
+This document describes the Connectors.OPCUA module for RaaLabs Edge.
 
-## Getting started
-It contains a .sln file for use with Visual Studio and a .csproj file including the necessary Nuget references. The template itself is a working Edge module and it comes with a Dockerfile to create images. Run the following commands to verify it runs:
+## What does it do?
+The connector reads nodes from a OPC UA server. A node is identified by a node id, consisting of a namespace index and an identifier, e.g. `ns=3;i=1002`.
 
-````bash
-dotnet restore
-dotnet build
+The connector are producing events of type [OutputName("output")] and should be routed to [IdentityMapper](https://github.com/RaaLabs/IdentityMapper).
 
-docker build -f Source/Dockerfile -t moduletemplate:test-tag .
-docker run moduletemplate:test-tag
-````
+## Configuration
+The module is configured using a JSON file. `connector.json` represents the connection to the TCP or UDP stream using IP and port. The following example json works with the Prosys OPC UA Simulation Server.
 
-You should see initial logs that the handlers are started.
+```json
+{
+    "serverUrl": "opc.tcp://<HOST>:<PORT>/<SERVERNAME>",
+    "nodeIds": [
+        "ns=3;i=1002",
+        "ns=3;i=1001"
+    ]
+}
+```
+
+## IoT Edge Deployment
+
+### $edgeAgent
+
+In your `deployment.json` file, you will need to add the module. For more details on modules in IoT Edge, go [here](https://docs.microsoft.com/en-us/azure/iot-edge/module-composition).
+
+The module has persistent state and it is assuming that this is in the `config` folder relative to where the binary is running.
+Since this is running in a containerized environment, the state is not persistent between runs. To get this state persistent, you'll
+need to configure the deployment to mount a folder on the host into the config folder.
+
+In your `deployment.json` file where you added the module, inside the `HostConfig` property, you should add the volume binding.
+
+```json
+"Mounts": [
+   {
+        "Type": "volume",
+        "Source": "raalabs-config-opcua",
+        "Target": "/app/config",
+        "RW": false
+    }
+]
+```
+
+```json
+{
+    "modulesContent": {
+        "$edgeAgent": {
+            "properties.desired.modules.OPCUA": {
+                "settings": {
+                    "image": "<repo-name>/connectors-opcua:<tag>",
+                    "createOptions": {
+                        "HostConfig": {
+                            "Mounts": [
+                                {
+                                    "Type": "volume",
+                                    "Source": "raalabs-config-opcua",
+                                    "Target": "/app/config",
+                                    "RW": false
+                                }]}
+                },
+                "type": "docker",
+                "version": "1.0",
+                "status": "running",
+                "restartPolicy": "always"
+            }
+        }
+    }
+}
+```
+
+### $edgeHub
+
+The routes in edgeHub can be specified like the example below.
+
+```json
+{
+    "$edgeHub": {
+        "properties.desired.routes.OPCUAToIdentityMapper": "FROM /messages/modules/OPCUA/outputs/output INTO BrokeredEndpoint(\"/modules/IdentityMapper/inputs/events\")",
+    }
+}
+```
+
+
+## Testing using Prosys OPC UA Simulation Server
+Prosys offers a free simulation server, which can be downloaded here: <https://downloads.prosysopc.com/opc-ua-simulation-server-downloads.php>.
+
+The OPC UA server starts automatically once you launch the application. Under `Objects`, you can browse the nodes present in the server, and navigating and clicking the individual nodes, you can find the nodes `NodeId`, which you can use in the `configuration.json` to test the connector using the simulator.
+
+The simulator also displays the server url (connection address) once you start the simulator.

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>RaaLabs.Edge.Connectors.OPCUA</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="AzureIoTEdgeModule"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RaaLabs.Edge" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.EventHandling" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.Configuration" Version="1.4.1"/>
+    <PackageReference Include="RaaLabs.Edge.Modules.EdgeHub" Version="1.4.1"/>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.4.366.38"/>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.4.366.38"/>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.4.366.38"/>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.366.38"/>
+    <PackageReference Include="Polly" Version="7.2.2"/>
+    <PackageReference Include="System.Linq" Version="4.3.0"/>
+    <PackageReference Include="morelinq" Version="3.3.2"/>
+  </ItemGroup>
+</Project>
