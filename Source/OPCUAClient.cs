@@ -55,7 +55,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                     EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(_applicationConfiguration);
                     ConfiguredEndpoint endpoint = new ConfiguredEndpoint(null, endpointDescription, endpointConfiguration);
 
-                    Session session = await Session.Create(
+                    Session opcuaSession = await Session.Create(
                         _applicationConfiguration,
                         endpoint,
                         false,
@@ -66,9 +66,9 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                         null
                     );
 
-                    if (session != null && session.Connected)
+                    if (opcuaSession != null && opcuaSession.Connected)
                     {
-                        this.session = session;
+                        this.session = opcuaSession;
                     }
 
                     _logger.Information($"New Session Created with SessionName = {this.session.SessionName}");
