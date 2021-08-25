@@ -107,7 +107,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (!_opcuaClient.session.Connected)
+                if (!_opcuaClient.Session.Connected)
                 {
                     await _opcuaClient.ConnectAsync();
                 }

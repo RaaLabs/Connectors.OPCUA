@@ -20,7 +20,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     {
         public OPCUAConfiguration _opcuaConfiguration;
         private ApplicationConfiguration _applicationConfiguration;
-        public Session session;
+        public Session Session { get; set; }
         private readonly ILogger _logger;
         private readonly Action<IList, IList> _validateResponse;
 
@@ -43,7 +43,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (session != null && session.Connected == true)
+                if (Session != null && Session.Connected == true)
                 {
                     _logger.Information("Session already connected!");
                 }
@@ -68,10 +68,10 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
                     if (opcuaSession != null && opcuaSession.Connected)
                     {
-                        this.session = opcuaSession;
+                        this.Session = opcuaSession;
                     }
 
-                    _logger.Information($"New Session Created with SessionName = {this.session.SessionName}");
+                    _logger.Information($"New Session Created with SessionName = {this.Session.SessionName}");
                 }
 
                 return true;
@@ -91,13 +91,13 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (session != null)
+                if (Session != null)
                 {
                     _logger.Information("Disconnecting...");
 
-                    session.Close();
-                    session.Dispose();
-                    session = null;
+                    Session.Close();
+                    Session.Dispose();
+                    Session = null;
 
                     _logger.Information("Session Disconnected.");
                 }
@@ -120,7 +120,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             _logger.Information("Reading nodes...");
 
-            session.Read(
+            Session.Read(
                 null,
                 0,
                 TimestampsToReturn.Both,
