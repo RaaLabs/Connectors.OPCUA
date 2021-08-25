@@ -20,7 +20,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     {
         public OPCUAConfiguration _opcuaConfiguration;
         private ApplicationConfiguration _applicationConfiguration;
-        private Session _session;
+        public Session session;
         private readonly ILogger _logger;
         private readonly Action<IList, IList> _validateResponse;
 
@@ -43,7 +43,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (_session != null && _session.Connected == true)
+                if (session != null && session.Connected == true)
                 {
                     _logger.Information("Session already connected!");
                 }
@@ -68,10 +68,10 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
                     if (session != null && session.Connected)
                     {
-                        this._session = session;
+                        this.session = session;
                     }
 
-                    _logger.Information($"New Session Created with SessionName = {this._session.SessionName}");
+                    _logger.Information($"New Session Created with SessionName = {this.session.SessionName}");
                 }
 
                 return true;
@@ -91,13 +91,13 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (_session != null)
+                if (session != null)
                 {
                     _logger.Information("Disconnecting...");
 
-                    _session.Close();
-                    _session.Dispose();
-                    _session = null;
+                    session.Close();
+                    session.Dispose();
+                    session = null;
 
                     _logger.Information("Session Disconnected.");
                 }
@@ -120,7 +120,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             _logger.Information("Reading nodes...");
 
-            _session.Read(
+            session.Read(
                 null,
                 0,
                 TimestampsToReturn.Both,

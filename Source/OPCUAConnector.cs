@@ -82,6 +82,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             _logger.Information("Raa Labs OPC UA connector");
             _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
+            await _opcuaClient.ConnectAsync();
 
             while (true)
             {
@@ -106,20 +107,16 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                bool connected = await _opcuaClient.ConnectAsync();
-                if (connected)
+                if (!_opcuaClient.session.Connected)
                 {
-                    List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
-                    _opcuaClient.Disconnect();
-
-                    foreach (var opcuaDatapoint in opcuaDatapoints)
-                    {
-                        SendDatapoint(opcuaDatapoint);
-                    }
+                    await _opcuaClient.ConnectAsync();
                 }
-                else
+
+                List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
+
+                foreach (var opcuaDatapoint in opcuaDatapoints)
                 {
-                    _logger.Information("Could not connect to server!");
+                    SendDatapoint(opcuaDatapoint);
                 }
             }
             catch (Exception ex)
