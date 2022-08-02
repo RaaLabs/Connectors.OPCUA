@@ -91,4 +91,4 @@ Prosys offers a free simulation server, which can be downloaded here: <https://d
 
 The OPC UA server starts automatically once you launch the application. Under `Objects`, you can browse the nodes present in the server, and navigating and clicking the individual nodes, you can find the nodes `NodeId`, which you can use in the `configuration.json` to test the connector using the simulator.
 
-The simulator also displays the server url (connection address) once you start the simulator.
+The simulator also displays the server url (connection address) once you start the simulator. Start the simulator and run the OPC UA connector by running `dotnet run` within the `Source` folder.
