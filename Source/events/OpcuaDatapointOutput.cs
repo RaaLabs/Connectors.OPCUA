@@ -11,7 +11,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA.Events
     /// The data point on the format it should be sent to EdgeHub.
     /// </summary>
     [OutputName("output")]
-    public class OPCUADatapointOutput : IEdgeHubOutgoingEvent
+    public class OpcuaDatapointOutput : IEdgeHubOutgoingEvent
     {
         /// <summary>
         /// Represents the Source system.

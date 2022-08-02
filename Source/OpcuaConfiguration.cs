@@ -10,12 +10,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     [Name("configuration.json")]
     [RestartOnChange]
     [ExcludeFromCodeCoverage]
-    public class OPCUAConfiguration : IConfiguration
+    public class OpcuaConfiguration : IConfiguration
     {
         public string ServerUrl { get; }
         public ISet<string> NodeIds { get; }
 
-        public OPCUAConfiguration(string serverUrl, ISet<string> nodeIds)
+        public OpcuaConfiguration(string serverUrl, ISet<string> nodeIds)
         {
             ServerUrl = serverUrl;
             NodeIds = nodeIds;
