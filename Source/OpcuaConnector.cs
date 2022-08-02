@@ -16,24 +16,24 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// <summary>
     /// Represents an implementation for <see cref="IProduceEvent"/>
     /// </summary>
-    public class OPCUAConnector : IRunAsync, IProduceEvent<Events.OPCUADatapointOutput>
+    public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutput>
     {
         /// <summary>
         /// 
         /// </summary>
-        public event EventEmitter<Events.OPCUADatapointOutput> SendDatapoint;
-        private OPCUAClient _opcuaClient;
-        private ReadValueIdCollection _nodesToRead;
+        public event EventEmitter<Events.OpcuaDatapointOutput> SendDatapoint;
+        private OpcuaClient _opcuaClient;
+        private readonly ReadValueIdCollection _nodesToRead;
         private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
-        private readonly OPCUAConfiguration _opcuaConfiguration;
+        private readonly OpcuaConfiguration _opcuaConfiguration;
 
 
         /// <summary>
-        /// Initializes a new instance of <see cref="OPCUAConnector"/>
+        /// Initializes a new instance of <see cref="OpcuaConnector"/>
         /// </summary>
         /// <param name="logger"><see cref="ILogger"/> for logging</param>
-        public OPCUAConnector(ILogger logger, OPCUAConfiguration opcuaConfiguration)
+        public OpcuaConnector(ILogger logger, OpcuaConfiguration opcuaConfiguration)
         {
             _logger = logger;
             _opcuaConfiguration = opcuaConfiguration;
@@ -81,7 +81,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         public async Task Run()
         {
             _logger.Information("Raa Labs OPC UA connector");
-            _opcuaClient = new OPCUAClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
+            _opcuaClient = new OpcuaClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
             await _opcuaClient.ConnectAsync();
 
             while (true)
@@ -96,14 +96,14 @@ namespace RaaLabs.Edge.Connectors.OPCUA
 
                 await policy.ExecuteAsync(async () =>
                 {
-                    await ConnectOPCUA();
+                    await ConnectOpcua();
                 });
 
                 await Task.Delay(1000);
             }
         }
 
-        private async Task ConnectOPCUA()
+        private async Task ConnectOpcua()
         {
             try
             {
@@ -112,7 +112,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                     await _opcuaClient.ConnectAsync();
                 }
 
-                List<Events.OPCUADatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
+                List<Events.OpcuaDatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
 
                 foreach (var opcuaDatapoint in opcuaDatapoints)
                 {

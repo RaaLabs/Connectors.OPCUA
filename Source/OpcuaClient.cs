@@ -16,18 +16,18 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// <summary>
     /// OPC UA Client with only read functionality.
     /// </summary>
-    class OPCUAClient
+    class OpcuaClient
     {
-        public OPCUAConfiguration _opcuaConfiguration;
-        private ApplicationConfiguration _applicationConfiguration;
+        private readonly OpcuaConfiguration _opcuaConfiguration;
+        private readonly ApplicationConfiguration _applicationConfiguration;
         public Session Session { get; set; }
         private readonly ILogger _logger;
         private readonly Action<IList, IList> _validateResponse;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="OPCUAClient".
+        /// Initializes a new instance of <see cref="OpcuaClient".
         /// </summary>
-        public OPCUAClient(ApplicationConfiguration applicationConfiguration, OPCUAConfiguration opcuaConfiguration, ILogger logger, Action<IList, IList> validateResponse)
+        public OpcuaClient(ApplicationConfiguration applicationConfiguration, OpcuaConfiguration opcuaConfiguration, ILogger logger, Action<IList, IList> validateResponse)
         {
             _validateResponse = validateResponse;
             _logger = logger;
@@ -43,7 +43,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (Session != null && Session.Connected == true)
+                if (Session != null && Session.Connected)
                 {
                     _logger.Information("Session already connected!");
                 }
@@ -116,7 +116,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// <summary>
         /// Read a list of nodes from Server
         /// </summary>
-        public List<Events.OPCUADatapointOutput> ReadNodes(ReadValueIdCollection nodes)
+        public List<Events.OpcuaDatapointOutput> ReadNodes(ReadValueIdCollection nodes)
         {
             _logger.Information("Reading nodes...");
 
@@ -132,7 +132,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             _validateResponse(resultsValues, nodes);
 
             var resultsValuesGroups = resultsValues.Batch(2);
-            List<Events.OPCUADatapointOutput> outputs = FormatOutput(resultsValuesGroups);
+            List<Events.OpcuaDatapointOutput> outputs = FormatOutput(resultsValuesGroups);
 
             return outputs;
         }
@@ -171,14 +171,14 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         /// <param name="resultsValuesGroups"></param>
         /// <returns></returns>
-        private List<Events.OPCUADatapointOutput> FormatOutput(IEnumerable<IEnumerable<DataValue>> resultsValuesGroups)
+        private static List<Events.OpcuaDatapointOutput> FormatOutput(IEnumerable<IEnumerable<DataValue>> resultsValuesGroups)
         {
-            List<Events.OPCUADatapointOutput> datapoints = new List<Events.OPCUADatapointOutput>();
+            List<Events.OpcuaDatapointOutput> datapoints = new List<Events.OpcuaDatapointOutput>();
 
 
             foreach (var resultValueGroup in resultsValuesGroups)
             {
-                var opcuaDatapointOutput = new Events.OPCUADatapointOutput
+                var opcuaDatapointOutput = new Events.OpcuaDatapointOutput
                 {
                     Source = "OPCUA",
                     Tag = resultValueGroup.ElementAt(0).Value.ToString(), // this is the node id

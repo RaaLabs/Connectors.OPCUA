@@ -10,7 +10,7 @@ using RaaLabs.Edge.Modules.Configuration;
 namespace RaaLabs.Edge.Connectors.OPCUA
 {
     [ExcludeFromCodeCoverage]
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
@@ -18,7 +18,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 .WithModule<EventHandling>()
                 .WithModule<Configuration>()
                 .WithModule<EdgeHub>()
-                .WithTask<OPCUAConnector>()
+                .WithTask<OpcuaConnector>()
                 .Build();
 
             application.Run().Wait();
