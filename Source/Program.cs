@@ -10,7 +10,7 @@ using RaaLabs.Edge.Modules.Configuration;
 namespace RaaLabs.Edge.Connectors.OPCUA
 {
     [ExcludeFromCodeCoverage]
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {

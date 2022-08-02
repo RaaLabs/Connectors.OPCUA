@@ -18,8 +18,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA
     /// </summary>
     class OPCUAClient
     {
-        public OPCUAConfiguration _opcuaConfiguration;
-        private ApplicationConfiguration _applicationConfiguration;
+        private readonly OPCUAConfiguration _opcuaConfiguration;
+        private readonly ApplicationConfiguration _applicationConfiguration;
         public Session Session { get; set; }
         private readonly ILogger _logger;
         private readonly Action<IList, IList> _validateResponse;
@@ -43,7 +43,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         {
             try
             {
-                if (Session != null && Session.Connected == true)
+                if (Session != null && Session.Connected)
                 {
                     _logger.Information("Session already connected!");
                 }
@@ -171,7 +171,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         /// <param name="resultsValuesGroups"></param>
         /// <returns></returns>
-        private List<Events.OPCUADatapointOutput> FormatOutput(IEnumerable<IEnumerable<DataValue>> resultsValuesGroups)
+        private static List<Events.OPCUADatapointOutput> FormatOutput(IEnumerable<IEnumerable<DataValue>> resultsValuesGroups)
         {
             List<Events.OPCUADatapointOutput> datapoints = new List<Events.OPCUADatapointOutput>();
 

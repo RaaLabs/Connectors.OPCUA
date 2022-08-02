@@ -23,7 +23,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         /// </summary>
         public event EventEmitter<Events.OPCUADatapointOutput> SendDatapoint;
         private OPCUAClient _opcuaClient;
-        private ReadValueIdCollection _nodesToRead;
+        private readonly ReadValueIdCollection _nodesToRead;
         private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
         private readonly OPCUAConfiguration _opcuaConfiguration;
