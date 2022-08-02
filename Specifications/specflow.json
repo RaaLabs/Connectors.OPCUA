@@ -1,8 +1,0 @@
-{
-    "allowDebugGeneratedFiles": true,
-    "stepAssemblies": [
-        {
-            "assembly": "RaaLabs.Edge.Testing"
-        }
-    ]
-}
