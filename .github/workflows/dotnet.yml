@@ -1,8 +1,8 @@
-name: .NET 5.0
+name: .NET
 
 env:
   PRERELEASE_BRANCHES: experimental,alpha,beta,rc
-  DOCKER_HUB_REPO: raaedge.azurecr.io/connectors-opcua
+  DOCKER_HUB_REPO: ${{ secrets.RAAEDGE_LOGIN_SERVER }}/connectors-opcua
   COVERAGE_FOLDER: Coverage
 
 on:
@@ -23,13 +23,13 @@ jobs:
       cascading-release: ${{ steps.context.outputs.cascading-release }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: recursive 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '5.0.x'
+        dotnet-version: '7.0.x'
     - name: Install dependencies
       run: dotnet restore --no-cache --verbosity normal
     - name: Build
@@ -72,7 +72,7 @@ jobs:
           docker push ${{ env.DOCKER_HUB_REPO }}:latest
 
     - name: Create GitHub Release
-      uses: dolittle/github-release-action@v1
+      uses: dolittle/github-release-action@v2
       if: ${{ steps.context.outputs.should-publish == 'true' }}
       with:
         cascading-release: ${{ steps.context.outputs.cascading-release }}
