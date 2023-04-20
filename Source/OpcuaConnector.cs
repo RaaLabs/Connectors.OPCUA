@@ -27,16 +27,18 @@ namespace RaaLabs.Edge.Connectors.OPCUA
         private readonly ApplicationInstance _opcuaAppInstance;
         private readonly ILogger _logger;
         private readonly OpcuaConfiguration _opcuaConfiguration;
+        private readonly IMetricsHandler _metricsHandler;
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="OpcuaConnector"/>
         /// </summary>
         /// <param name="logger"><see cref="ILogger"/> for logging</param>
-        public OpcuaConnector(ILogger logger, OpcuaConfiguration opcuaConfiguration)
+        public OpcuaConnector(ILogger logger, OpcuaConfiguration opcuaConfiguration, IMetricsHandler metricsHandler)
         {
             _logger = logger;
             _opcuaConfiguration = opcuaConfiguration;
+            _metricsHandler = metricsHandler;
 
             var securityConfig = new SecurityConfiguration()
             {
@@ -117,6 +119,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 foreach (var opcuaDatapoint in opcuaDatapoints)
                 {
                     SendDatapoint(opcuaDatapoint);
+                    _metricsHandler.NumberOfMessagesSent(1);
                 }
             }
             catch (Exception ex)

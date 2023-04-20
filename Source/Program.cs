@@ -5,6 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
+using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
+
 
 
 namespace RaaLabs.Edge.Connectors.OPCUA
@@ -18,6 +20,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
                 .WithModule<EventHandling>()
                 .WithModule<Configuration>()
                 .WithModule<EdgeHub>()
+                .WithModule<RaaLabsDiagnostics>()
                 .WithTask<OpcuaConnector>()
                 .Build();
 
