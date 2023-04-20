@@ -46,7 +46,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA
             var config = new ApplicationConfiguration()
             {
                 ApplicationName = "Raa Labs OPC UA connector",
-                ApplicationUri = Utils.Format(@"urn:{0}:" + "Raa Labs OPC UA connector" + "", ""),
+                ApplicationUri = "Raa Labs OPC UA connector",
                 ApplicationType = ApplicationType.Client,
                 TransportConfigurations = new TransportConfigurationCollection(),
                 TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
