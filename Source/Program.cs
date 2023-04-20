@@ -9,22 +9,21 @@ using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
 
 
 
-namespace RaaLabs.Edge.Connectors.OPCUA
-{
-    [ExcludeFromCodeCoverage]
-    static class Program
-    {
-        static void Main(string[] args)
-        {
-            var application = new ApplicationBuilder()
-                .WithModule<EventHandling>()
-                .WithModule<Configuration>()
-                .WithModule<EdgeHub>()
-                .WithModule<RaaLabsDiagnostics>()
-                .WithTask<OpcuaConnector>()
-                .Build();
+namespace RaaLabs.Edge.Connectors.OPCUA;
 
-            application.Run().Wait();
-        }
+[ExcludeFromCodeCoverage]
+static class Program
+{
+    static void Main(string[] args)
+    {
+        var application = new ApplicationBuilder()
+            .WithModule<EventHandling>()
+            .WithModule<Configuration>()
+            .WithModule<EdgeHub>()
+            .WithModule<RaaLabsDiagnostics>()
+            .WithTask<OpcuaConnector>()
+            .Build();
+
+        application.Run().Wait();
     }
 }
