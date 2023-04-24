@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine3.13 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine3.17 AS build-env
 WORKDIR /app
 
 VOLUME [ "/app/config" ]
@@ -9,9 +9,14 @@ WORKDIR /app/Source
 
 RUN dotnet restore --runtime alpine-x64
 
-RUN dotnet publish -c Release -o out --no-restore 
+RUN dotnet publish -c Release -o out --no-restore \
+    --runtime alpine-x64 \
+    --self-contained true \
+    /p:PublishTrimmed=true \
+    /p:PublishSingleFile=true
 
-FROM mcr.microsoft.com/dotnet/runtime:5.0-alpine3.13
+FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine3.17 AS final
+
 WORKDIR /app
 COPY --from=build-env /app/Source/out ./
 COPY --from=build-env /app/Source/config ./config
@@ -19,4 +24,4 @@ COPY --from=build-env /app/Source/config ./config
 RUN adduser -Ds /bin/sh moduleuser	
 USER moduleuser
 
-ENTRYPOINT ["dotnet", "RaaLabs.Edge.Connectors.OPCUA.dll"]
+ENTRYPOINT ["./RaaLabs.Edge.Connectors.OPCUA"]

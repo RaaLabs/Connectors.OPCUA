@@ -5,20 +5,19 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using RaaLabs.Edge.Modules.Configuration;
 
-namespace RaaLabs.Edge.Connectors.OPCUA
-{
-    [Name("configuration.json")]
-    [RestartOnChange]
-    [ExcludeFromCodeCoverage]
-    public class OpcuaConfiguration : IConfiguration
-    {
-        public string ServerUrl { get; }
-        public ISet<string> NodeIds { get; }
+namespace RaaLabs.Edge.Connectors.OPCUA;
 
-        public OpcuaConfiguration(string serverUrl, ISet<string> nodeIds)
-        {
-            ServerUrl = serverUrl;
-            NodeIds = nodeIds;
-        }
+[Name("configuration.json")]
+[RestartOnChange]
+[ExcludeFromCodeCoverage]
+public class OpcuaConfiguration : IConfiguration
+{
+    public string ServerUrl { get; }
+    public ISet<string> NodeIds { get; }
+
+    public OpcuaConfiguration(string serverUrl, ISet<string> nodeIds)
+    {
+        ServerUrl = serverUrl;
+        NodeIds = nodeIds;
     }
 }

@@ -5,23 +5,25 @@ using System.Diagnostics.CodeAnalysis;
 using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
+using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
 
 
-namespace RaaLabs.Edge.Connectors.OPCUA
+
+namespace RaaLabs.Edge.Connectors.OPCUA;
+
+[ExcludeFromCodeCoverage]
+static class Program
 {
-    [ExcludeFromCodeCoverage]
-    static class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            var application = new ApplicationBuilder()
-                .WithModule<EventHandling>()
-                .WithModule<Configuration>()
-                .WithModule<EdgeHub>()
-                .WithTask<OpcuaConnector>()
-                .Build();
+        var application = new ApplicationBuilder()
+            .WithModule<EventHandling>()
+            .WithModule<Configuration>()
+            .WithModule<EdgeHub>()
+            .WithModule<RaaLabsDiagnostics>()
+            .WithTask<OpcuaConnector>()
+            .Build();
 
-            application.Run().Wait();
-        }
+        application.Run().Wait();
     }
 }
