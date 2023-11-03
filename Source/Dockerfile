@@ -7,6 +7,13 @@ COPY Source/ ./Source/
 
 WORKDIR /app/Source
 
+RUN --mount=type=secret,id=NUGET_GITHUB_PACKAGES_USERNAME \
+    --mount=type=secret,id=NUGET_GITHUB_PACKAGES_TOKEN \
+    dotnet nuget add source \
+    --username $(cat /run/secrets/NUGET_GITHUB_PACKAGES_USERNAME) \
+    --password $(cat /run/secrets/NUGET_GITHUB_PACKAGES_TOKEN) \
+    --store-password-in-clear-text --name "githubpackagesnuget" "https://nuget.pkg.github.com/RaaLabs/index.json"
+
 RUN dotnet restore --runtime alpine-x64
 
 RUN dotnet publish -c Release -o out --no-restore \
