@@ -42,13 +42,15 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
 
         var securityConfig = new SecurityConfiguration()
         {
-            AutoAcceptUntrustedCertificates = true // ONLY for debugging/early dev
+            TrustedIssuerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/ca" },
+            TrustedPeerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/ca" },
+            ApplicationCertificate = new CertificateIdentifier { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/client", SubjectName = string.Format("DC={0},O={1},CN={2}", "Rafaels-MacBook-Pro.local", "Prosys OPC", "SimulationServer@Rafaels-MacBook-Pro") },
         };
 
         var config = new ApplicationConfiguration()
         {
-            ApplicationName = "Raa Labs OPC UA connector",
-            ApplicationUri = "Raa Labs OPC UA connector",
+            ApplicationName = "RaaLabsOPCUAConnector",
+            ApplicationUri = "urn:Rafaels-MacBook-Pro.local:OPCUA:SimulationServer",
             ApplicationType = ApplicationType.Client,
             TransportConfigurations = new TransportConfigurationCollection(),
             TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
@@ -59,10 +61,10 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
 
         _opcuaAppInstance = new ApplicationInstance()
         {
-            ApplicationName = "Raa Labs OPC UA connector",
-            ApplicationType = ApplicationType.Client,
             ApplicationConfiguration = config
         };
+
+        _opcuaAppInstance.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
         _nodesToRead = InitializeReadValueIdCollection();
     }

@@ -160,7 +160,14 @@ class OpcuaClient
 
         if (certificateAccepted)
         {
-            _logger.Information("Untrusted Certificate accepted. SubjectName = {0}", e.Certificate.SubjectName);
+            _logger.Information("Untrusted Certificate accepted. Subject = {0}", e.Certificate.Subject);
+            _logger.Information("Untrusted Certificate accepted. Issuer = {0}", e.Certificate.Issuer);
+        }
+        
+        else
+        {
+            _logger.Information("Untrusted Certificate rejected. Subject = {0}", e.Certificate.Subject);
+            _logger.Information("Untrusted Certificate rejected. Issuer = {0}", e.Certificate.Issuer);
         }
 
         e.AcceptAll = certificateAccepted;
