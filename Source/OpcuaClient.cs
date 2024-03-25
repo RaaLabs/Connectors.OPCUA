@@ -51,7 +51,7 @@ class OpcuaClient
             {
                 _logger.Information("Connecting...");
 
-                EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(_opcuaConfiguration.ServerUrl, false);
+                EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(discoveryUrl:_opcuaConfiguration.ServerUrl, useSecurity:true);
                 EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(_applicationConfiguration);
                 ConfiguredEndpoint endpoint = new ConfiguredEndpoint(null, endpointDescription, endpointConfiguration);
 
@@ -143,14 +143,6 @@ class OpcuaClient
     /// </summary>
     private void CertificateValidation(CertificateValidator sender, CertificateValidationEventArgs e)
     {
-        bool certificateAccepted = true;
-
-        // ****
-        // Implement a custom logic to decide if the certificate should be
-        // accepted or not and set certificateAccepted flag accordingly.
-        // The certificate can be retrieved from the e.Certificate field
-        // ***
-
         ServiceResult error = e.Error;
         while (error != null)
         {
@@ -158,16 +150,34 @@ class OpcuaClient
             error = error.InnerResult;
         }
 
+        bool certificateAccepted = false;
+        bool subjectAndIssuerMatch = false;
+        bool certificateIsNotExpired = false;
+
+        if (e.Certificate.Subject == _opcuaConfiguration.OpcUaServerCertificateSubject && e.Certificate.Issuer == _opcuaConfiguration.OpcUaServerCertificateIssuer)
+        {
+            subjectAndIssuerMatch = true;
+        }
+
+        DateTimeOffset dateTimeOffsetNow = DateTimeOffset.Now;
+        if (dateTimeOffsetNow >= e.Certificate.NotBefore && dateTimeOffsetNow <= e.Certificate.NotAfter)
+        {
+            certificateIsNotExpired = true;
+        }
+
+        if (subjectAndIssuerMatch && certificateIsNotExpired)
+        {
+            certificateAccepted = true;
+        }
+
         if (certificateAccepted)
         {
-            _logger.Information("Untrusted Certificate accepted. Subject = {0}", e.Certificate.Subject);
-            _logger.Information("Untrusted Certificate accepted. Issuer = {0}", e.Certificate.Issuer);
+            _logger.Information("Untrusted Certificate accepted. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
         }
         
         else
         {
-            _logger.Information("Untrusted Certificate rejected. Subject = {0}", e.Certificate.Subject);
-            _logger.Information("Untrusted Certificate rejected. Issuer = {0}", e.Certificate.Issuer);
+            _logger.Information("Untrusted Certificate rejected. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
         }
 
         e.AcceptAll = certificateAccepted;

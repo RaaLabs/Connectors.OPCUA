@@ -2,6 +2,7 @@
 // Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.IO;
 using Serilog;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -42,15 +43,14 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
 
         var securityConfig = new SecurityConfiguration()
         {
-            TrustedIssuerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/ca" },
-            TrustedPeerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/ca" },
-            ApplicationCertificate = new CertificateIdentifier { StoreType = @"Directory", StorePath = "/Users/rafaelschlatter/raalabs/edge/Connectors.OPCUA/Source/config/certs/client", SubjectName = string.Format("DC={0},O={1},CN={2}", "Rafaels-MacBook-Pro.local", "Prosys OPC", "SimulationServer@Rafaels-MacBook-Pro") },
+            ApplicationCertificate = new CertificateIdentifier { StoreType = @"Directory", StorePath = Directory.GetCurrentDirectory(), SubjectName = string.Format("DC={0},O={1},CN={2}", "Rafaels-MacBook-Pro.local", "Prosys OPC", "SimulationServer@Rafaels-MacBook-Pro") },
+            AutoAcceptUntrustedCertificates = opcuaConfiguration.OpcUaServerAutoAcceptUntrustedCertificates
         };
 
         var config = new ApplicationConfiguration()
         {
             ApplicationName = "RaaLabsOPCUAConnector",
-            ApplicationUri = "urn:Rafaels-MacBook-Pro.local:OPCUA:SimulationServer",
+            ApplicationUri = "urn:RaaLabsOPCUAConnector",
             ApplicationType = ApplicationType.Client,
             TransportConfigurations = new TransportConfigurationCollection(),
             TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },

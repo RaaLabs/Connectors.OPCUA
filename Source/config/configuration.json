@@ -3,5 +3,8 @@
     "nodeIds": [
         "ns=3;i=1002",
         "ns=3;i=1001"
-    ]
+    ],
+    "opcUaServerCertificateIssuer": "",
+    "opcUaServerCertificateSubject": "",
+    "opcUaServerAutoAcceptUntrustedCertificates": false
 }
