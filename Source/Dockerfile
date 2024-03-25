@@ -18,7 +18,7 @@ RUN --mount=type=secret,id=NUGET_GITHUB_PACKAGES_USERNAME \
 RUN dotnet restore --runtime="linux-musl-${TARGETARCH/amd64/x64}"
 
 RUN dotnet publish -c Release -o out --no-restore \
-    --runtime alpine-x64 \
+    --runtime="linux-musl-${TARGETARCH/amd64/x64}" \
     --self-contained true \
     /p:PublishTrimmed=true \
     /p:PublishSingleFile=true
