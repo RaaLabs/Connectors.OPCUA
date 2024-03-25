@@ -280,3 +280,5 @@ Artifacts/
 
 *.feature.cs
 *.DS_Store
+*.der
+*.pfx
