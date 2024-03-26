@@ -151,12 +151,26 @@ class OpcuaClient
         }
 
         bool certificateAccepted = false;
-        bool subjectAndIssuerMatch = false;
+        bool subjectMatch = false;
+        bool issuerMatch = false;
         bool certificateIsNotExpired = false;
 
-        if (e.Certificate.Subject == _opcuaConfiguration.OpcUaServerCertificateSubject && e.Certificate.Issuer == _opcuaConfiguration.OpcUaServerCertificateIssuer)
+        if (e.Certificate.Subject == _opcuaConfiguration.OpcUaServerCertificateSubject)
         {
-            subjectAndIssuerMatch = true;
+            subjectMatch = true;
+        }
+        else
+        {
+            _logger.Information("Subject from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateSubject, e.Certificate.Subject);
+        }
+
+        if (e.Certificate.Issuer == _opcuaConfiguration.OpcUaServerCertificateIssuer)
+        {
+            issuerMatch = true;
+        }
+        else
+        {
+            _logger.Information("Issuer from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateIssuer, e.Certificate.Issuer);
         }
 
         DateTimeOffset dateTimeOffsetNow = DateTimeOffset.Now;
@@ -165,7 +179,7 @@ class OpcuaClient
             certificateIsNotExpired = true;
         }
 
-        if (subjectAndIssuerMatch && certificateIsNotExpired)
+        if (subjectMatch && issuerMatch && certificateIsNotExpired)
         {
             certificateAccepted = true;
         }
