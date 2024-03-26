@@ -64,7 +64,7 @@ class OpcuaClient
                     30 * 60 * 1000,
                     new UserIdentity(),
                     null
-                );
+                ).ConfigureAwait(false);
 
                 if (opcuaSession != null && opcuaSession.Connected)
                 {
@@ -188,7 +188,7 @@ class OpcuaClient
         {
             _logger.Information("Untrusted Certificate accepted. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
         }
-        
+
         else
         {
             _logger.Information("Untrusted Certificate rejected. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
@@ -219,7 +219,7 @@ class OpcuaClient
 
             datapoints.Add(opcuaDatapointOutput);
         }
-        
+
         return datapoints;
     }
 }

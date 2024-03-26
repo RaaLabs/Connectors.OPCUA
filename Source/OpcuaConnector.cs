@@ -20,7 +20,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutput>
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public event EventEmitter<Events.OpcuaDatapointOutput> SendDatapoint;
     private OpcuaClient _opcuaClient;
@@ -74,7 +74,7 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
         ReadValueIdCollection nodesToRead = new ReadValueIdCollection(){};
         foreach (var nodeId in _opcuaConfiguration.NodeIds)
         {
-            // Because nodeId and value cannot be read using the same ReadValueId, but nodeId and value are required 
+            // Because nodeId and value cannot be read using the same ReadValueId, but nodeId and value are required
             nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.NodeId });
             nodesToRead.Add(new ReadValueId() { NodeId = nodeId, AttributeId = Attributes.Value });
         }
@@ -86,7 +86,7 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
     {
         _logger.Information("Raa Labs OPC UA connector");
         _opcuaClient = new OpcuaClient(_opcuaAppInstance.ApplicationConfiguration, _opcuaConfiguration, _logger, ClientBase.ValidateResponse);
-        await _opcuaClient.ConnectAsync();
+        await _opcuaClient.ConnectAsync().ConfigureAwait(false);
 
         while (true)
         {
@@ -100,10 +100,10 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
 
             await policy.ExecuteAsync(async () =>
             {
-                await ConnectOpcua();
-            });
+                await ConnectOpcua().ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
         }
     }
 
@@ -113,7 +113,7 @@ public class OpcuaConnector : IRunAsync, IProduceEvent<Events.OpcuaDatapointOutp
         {
             if (!_opcuaClient.Session.Connected)
             {
-                await _opcuaClient.ConnectAsync();
+                await _opcuaClient.ConnectAsync().ConfigureAwait(false);
             }
 
             List<Events.OpcuaDatapointOutput> opcuaDatapoints = _opcuaClient.ReadNodes(_nodesToRead);
