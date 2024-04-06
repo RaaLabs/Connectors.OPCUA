@@ -9,7 +9,7 @@ on:
 
 jobs:
   dotnet:
-    uses: RaaLabs/reusable-workflows/.github/workflows/dotnet-build.yml@dmain
+    uses: RaaLabs/reusable-workflows/.github/workflows/dotnet-build.yml@main
     with:
       IMAGE_NAME: 'connectors-opcua'
     secrets:
