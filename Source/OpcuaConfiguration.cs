@@ -14,10 +14,16 @@ public class OpcuaConfiguration : IConfiguration
 {
     public string ServerUrl { get; }
     public ISet<string> NodeIds { get; }
+    public string OpcUaServerCertificateIssuer { get; }
+    public string OpcUaServerCertificateSubject { get;}
+    public bool OpcUaServerAutoAcceptUntrustedCertificates { get; }
 
-    public OpcuaConfiguration(string serverUrl, ISet<string> nodeIds)
+    public OpcuaConfiguration(string serverUrl, ISet<string> nodeIds, string opcUaServerCertificateIssuer, string opcUaServerCertificateSubject, bool opcUaServerAutoAcceptUntrustedCertificates = false)
     {
         ServerUrl = serverUrl;
         NodeIds = nodeIds;
+        OpcUaServerCertificateIssuer = opcUaServerCertificateIssuer;
+        OpcUaServerCertificateSubject = opcUaServerCertificateSubject;
+        OpcUaServerAutoAcceptUntrustedCertificates = opcUaServerAutoAcceptUntrustedCertificates;
     }
 }

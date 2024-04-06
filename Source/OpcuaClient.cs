@@ -51,7 +51,7 @@ class OpcuaClient
             {
                 _logger.Information("Connecting...");
 
-                EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(_opcuaConfiguration.ServerUrl, false);
+                EndpointDescription endpointDescription = CoreClientUtils.SelectEndpoint(discoveryUrl:_opcuaConfiguration.ServerUrl, useSecurity:true);
                 EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(_applicationConfiguration);
                 ConfiguredEndpoint endpoint = new ConfiguredEndpoint(null, endpointDescription, endpointConfiguration);
 
@@ -64,7 +64,7 @@ class OpcuaClient
                     30 * 60 * 1000,
                     new UserIdentity(),
                     null
-                );
+                ).ConfigureAwait(false);
 
                 if (opcuaSession != null && opcuaSession.Connected)
                 {
@@ -143,14 +143,6 @@ class OpcuaClient
     /// </summary>
     private void CertificateValidation(CertificateValidator sender, CertificateValidationEventArgs e)
     {
-        bool certificateAccepted = true;
-
-        // ****
-        // Implement a custom logic to decide if the certificate should be
-        // accepted or not and set certificateAccepted flag accordingly.
-        // The certificate can be retrieved from the e.Certificate field
-        // ***
-
         ServiceResult error = e.Error;
         while (error != null)
         {
@@ -158,9 +150,48 @@ class OpcuaClient
             error = error.InnerResult;
         }
 
+        bool certificateAccepted = false;
+        bool subjectMatch = false;
+        bool issuerMatch = false;
+        bool certificateIsNotExpired = false;
+
+        if (e.Certificate.Subject == _opcuaConfiguration.OpcUaServerCertificateSubject)
+        {
+            subjectMatch = true;
+        }
+        else
+        {
+            _logger.Information("Subject from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateSubject, e.Certificate.Subject);
+        }
+
+        if (e.Certificate.Issuer == _opcuaConfiguration.OpcUaServerCertificateIssuer)
+        {
+            issuerMatch = true;
+        }
+        else
+        {
+            _logger.Information("Issuer from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateIssuer, e.Certificate.Issuer);
+        }
+
+        DateTimeOffset dateTimeOffsetNow = DateTimeOffset.Now;
+        if (dateTimeOffsetNow >= e.Certificate.NotBefore && dateTimeOffsetNow <= e.Certificate.NotAfter)
+        {
+            certificateIsNotExpired = true;
+        }
+
+        if (subjectMatch && issuerMatch && certificateIsNotExpired)
+        {
+            certificateAccepted = true;
+        }
+
         if (certificateAccepted)
         {
-            _logger.Information("Untrusted Certificate accepted. SubjectName = {0}", e.Certificate.SubjectName);
+            _logger.Information("Untrusted Certificate accepted. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
+        }
+
+        else
+        {
+            _logger.Information("Untrusted Certificate rejected. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
         }
 
         e.AcceptAll = certificateAccepted;
@@ -188,7 +219,7 @@ class OpcuaClient
 
             datapoints.Add(opcuaDatapointOutput);
         }
-        
+
         return datapoints;
     }
 }

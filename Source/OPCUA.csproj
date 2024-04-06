@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="./OPCUA.CodeStyle.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <TrimMode>partial</TrimMode>
     <AssemblyName>RaaLabs.Edge.Connectors.OPCUA</AssemblyName>
   </PropertyGroup>
@@ -12,15 +13,15 @@
     <TrimmerRootAssembly Include="RaaLabs.Edge.Connectors.OPCUA" preserve="all" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="RaaLabs.Edge" Version="1.16.1" />
-    <PackageReference Include="RaaLabs.Edge.Modules.EventHandling" Version="1.16.1" />
-    <PackageReference Include="RaaLabs.Edge.Modules.Configuration" Version="1.16.1" />
-    <PackageReference Include="RaaLabs.Edge.Modules.EdgeHub" Version="1.16.1" />
-    <PackageReference Include="RaaLabs.Edge.Modules.Diagnostics" Version="1.16.1" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.373.121" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.373.121" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.373.121" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.373.121" />
+    <PackageReference Include="RaaLabs.Edge" Version="1.16.3" />
+    <PackageReference Include="RaaLabs.Edge.Modules.EventHandling" Version="1.16.3" />
+    <PackageReference Include="RaaLabs.Edge.Modules.Configuration" Version="1.16.3" />
+    <PackageReference Include="RaaLabs.Edge.Modules.EdgeHub" Version="1.16.3" />
+    <PackageReference Include="RaaLabs.Edge.Modules.Diagnostics" Version="1.16.3" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.374.27" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.374.27" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.374.27" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.374.27" />
     <PackageReference Include="Polly" Version="7.2.4" />
   </ItemGroup>
 </Project>
