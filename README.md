@@ -1,5 +1,5 @@
 # Connectors.OPCUA
-[![.NET 5.0](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml)
+[![dotnet build](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml/badge.svg)](https://github.com/RaaLabs/Connectors.OPCUA/actions/workflows/dotnet.yml)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUA&metric=sqale_rating&token=237aec8269dd7b80a5ef37b10b858152b085720e)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.OPCUA&metric=coverage&token=237aec8269dd7b80a5ef37b10b858152b085720e)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.OPCUA)
 
@@ -19,7 +19,10 @@ The module is configured using a JSON file. `connector.json` represents the conn
     "nodeIds": [
         "ns=3;i=1002",
         "ns=3;i=1001"
-    ]
+    ],
+    "opcUaServerCertificateIssuer": "Name of certificate issuer", // used to verify untrusted server certificates
+    "opcUaServerCertificateSubject": "Issuer subject",            // used to verify untrusted server certificates
+    "opcUaServerAutoAcceptUntrustedCertificates": false
 }
 ```
 
