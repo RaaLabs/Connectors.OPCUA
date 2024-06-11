@@ -33,7 +33,6 @@ class OpcuaClient
         _logger = logger;
         _opcuaConfiguration = opcuaConfiguration;
         _applicationConfiguration = applicationConfiguration;
-        _applicationConfiguration.CertificateValidator.CertificateValidation += CertificateValidation;
     }
 
     /// <summary>
@@ -135,66 +134,6 @@ class OpcuaClient
         List<Events.OpcuaDatapointOutput> outputs = FormatOutput(resultsValuesGroups);
 
         return outputs;
-    }
-
-    /// <summary>
-    /// Handles the certificate validation event.
-    /// This event is triggered every time an untrusted certificate is received from the server.
-    /// </summary>
-    private void CertificateValidation(CertificateValidator sender, CertificateValidationEventArgs e)
-    {
-        ServiceResult error = e.Error;
-        while (error != null)
-        {
-            _logger.Information(error.ToString());
-            error = error.InnerResult;
-        }
-
-        bool certificateAccepted = false;
-        bool subjectMatch = false;
-        bool issuerMatch = false;
-        bool certificateIsNotExpired = false;
-
-        if (e.Certificate.Subject == _opcuaConfiguration.OpcUaServerCertificateSubject)
-        {
-            subjectMatch = true;
-        }
-        else
-        {
-            _logger.Information("Subject from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateSubject, e.Certificate.Subject);
-        }
-
-        if (e.Certificate.Issuer == _opcuaConfiguration.OpcUaServerCertificateIssuer)
-        {
-            issuerMatch = true;
-        }
-        else
-        {
-            _logger.Information("Issuer from server certificate does not match. Expected={0}, Actual={1}", _opcuaConfiguration.OpcUaServerCertificateIssuer, e.Certificate.Issuer);
-        }
-
-        DateTimeOffset dateTimeOffsetNow = DateTimeOffset.Now;
-        if (dateTimeOffsetNow >= e.Certificate.NotBefore && dateTimeOffsetNow <= e.Certificate.NotAfter)
-        {
-            certificateIsNotExpired = true;
-        }
-
-        if (subjectMatch && issuerMatch && certificateIsNotExpired)
-        {
-            certificateAccepted = true;
-        }
-
-        if (certificateAccepted)
-        {
-            _logger.Information("Untrusted Certificate accepted. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
-        }
-
-        else
-        {
-            _logger.Information("Untrusted Certificate rejected. Subject={0}, Issuer={1}", e.Certificate.Subject, e.Certificate.Issuer);
-        }
-
-        e.AcceptAll = certificateAccepted;
     }
 
     /// <summary>
