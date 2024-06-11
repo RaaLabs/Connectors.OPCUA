@@ -21,7 +21,7 @@ static class Program
             .WithModule<Configuration>()
             .WithModule<EdgeHub>()
             .WithModule<RaaLabsDiagnostics>()
-            .WithTask<OpcuaConnector>()
+            .WithTask<Connector>()
             .Build();
 
         application.Run().Wait();

@@ -1,7 +1,13 @@
 {
     "serverUrl": "opc.tcp://<HOST>:<PORT>/<SERVERNAME>",
-    "nodeIds": [
-        "ns=3;i=1002",
-        "ns=3;i=1001"
+    "nodes": [
+        {
+            "id": "ns=3;i=1002",
+            "subscribeIntervalSeconds": 1.0
+        },
+        {
+            "id": "ns=3;i=1001",
+            "readIntervalSeconds": 1.0
+        }
     ]
 }
