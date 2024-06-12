@@ -10,3 +10,6 @@ public interface ICanReadNodes
 {
     Task ReadNodesForever(Session connection, IEnumerable<(string id, TimeSpan readInterval)> nodes, Func<NodeValue,Task> handleValue, CancellationToken cancellationToken);
 }
+
+// NOT Task.Delay but PeriodicTimer
+// var node = await session.ReadValueAsync(nodeId, CancellationToken.None);
