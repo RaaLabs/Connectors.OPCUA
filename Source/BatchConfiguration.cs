@@ -7,17 +7,8 @@ using RaaLabs.Edge.Modules.EdgeHub;
 
 namespace RaaLabs.Edge.Connectors.OPCUA;
 
-/// <summary>
-/// Config class for batching settings.
-/// </summary>
 public class BatchConfiguration : IEdgeHubOutgoingEventBatchConfiguration
 {
-    /// <summary>
-    /// The batch size.
-    /// </summary>
     public int BatchSize { get; set; } = int.Parse(Environment.GetEnvironmentVariable("EDGEHUB_BATCH_SIZE") ?? "250", CultureInfo.CurrentCulture);
-    /// <summary>
-    /// The batch interval in milliseconds.
-    /// </summary>
     public int Interval { get; set; } = int.Parse(Environment.GetEnvironmentVariable("EDGEHUB_BATCH_INTERVAL") ?? "5000", CultureInfo.CurrentCulture);
 }

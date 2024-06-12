@@ -15,20 +15,20 @@ public class OpcuaDatapointOutput : IEdgeHubOutgoingEvent
     /// <summary>
     /// Represents the Source system.
     /// </summary>
-    public string Source { get; set; }
+    public required string Source { get; init; }
 
     /// <summary>
     /// Gets or sets the tag. Represents the sensor name from the source system, OPC UA node id, consisting of namespace index and identifier, e.g. "ns=3;i=1002".
     /// </summary>
-    public string Tag { get; set; }
+    public required string Tag { get; init; }
 
     /// <summary>
     /// The value of the sensor reading.
     /// </summary>
-    public dynamic Value { get; set; }
+    public required dynamic Value { get; init; }
 
     /// <summary>
     /// Gets or sets the timestamp in the form of EPOCH milliseconds granularity.
     /// </summary>
-    public long Timestamp { get; set; }
+    public long Timestamp { get; init; }
 }
