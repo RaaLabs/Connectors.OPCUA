@@ -15,12 +15,16 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
 {
 
     [Counter(Name = "messages_received_total", Unit = "count", Description = "The total number of messages received", Exported = true)]
-    public void NumberOfMessagesReceived(long value);
+    public void NumberOfMessagesReceived(int value);
 
     [Counter(Name = "messages_sent_total", Unit = "count", Description = "The total number of messages sent", Exported = true)]
-    public void NumberOfMessagesSent(long value);
+    public void NumberOfMessagesSent(int value);
 
+    [Counter(Name = "opcua_bad_statuscode_received", Unit = "count", Description = "The total number of bad status code received from OPCUA server", Exported = true)]
+    public void NumberOfBadStatusCodesFor(int value, string nodeId);
 
+    [Counter(Name = "opcua_invalid_timestamp_received", Unit = "count", Description = "The total number of invalid timestamps received from OPCUA server or source", Exported = true)]
+    public void InvalidTimestampReceived(int value);
 
     [Counter(Name = "opcua_session_connection_attempts_total", Unit = "count", Description = "The total number of connection attempts to the OPCUA server", Exported = true)]
     public void NumberOfSessionConnectionAttempts(long value);

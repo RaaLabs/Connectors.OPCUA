@@ -13,6 +13,7 @@ public class ConnectorConfiguration : IConfiguration
     public required string ServerUrl { get; init; }
     public double PublishIntervalSeconds { get; init; } = 1.0;
     public IList<NodeConfiguration> Nodes { get; init; } = [];
+    public string? Source { get; set; }
 }
 
 public class NodeConfiguration
