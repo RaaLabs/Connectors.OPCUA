@@ -21,7 +21,7 @@ public class and_statuscode_not_good : given.a_creator
     static OpcuaDatapointOutput result;
     Because of = () => result = parser.CreateDatapointFrom(nodevalue);
 
-    It should_log_warning = () => logger.Verify(_ => _.Warning("Bad status code for node {NodeId}", new NodeId("ns=1;i=1")));
+    It should_log_warning = () => logger.Verify(_ => _.Warning("Bad status code for node {NodeId} - {StatusCode}", new NodeId("ns=1;i=1"), nodevalue.Value.StatusCode));
     It should_have_correct_source = () => result.Source.ShouldEqual("OPCUA");
     It should_have_correct_tag = () => result.Tag.ShouldEqual("ns=1;i=1");
     It should_have_correct_value = () => result.Value.Equals(2);
