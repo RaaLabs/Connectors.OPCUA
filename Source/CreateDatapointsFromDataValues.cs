@@ -32,7 +32,7 @@ public class CreateDatapointsFromDataValues : ICreateDatapointsFromDataValues
             _metrics.NumberOfBadStatusCodesFor(1, nodeValue.Node.Identifier.ToString()!);
         }
 
-        if (!ValidateTimestamps(nodeValue, nodeValue.Value.ServerTimestamp, "ServerTimestamp") && !ValidateTimestamps(nodeValue, nodeValue.Value.SourceTimestamp, "SourceTimestamp"))
+        if (TimestampIsInvalid(nodeValue, nodeValue.Value.ServerTimestamp, "Server") && TimestampIsInvalid(nodeValue, nodeValue.Value.SourceTimestamp, "Source"))
         {
         }
 
@@ -45,22 +45,16 @@ public class CreateDatapointsFromDataValues : ICreateDatapointsFromDataValues
         };
     }
 
-    private bool ValidateTimestamps(NodeValue nodeValue, DateTime timestamp, string timestampType)
+    private bool TimestampIsInvalid(NodeValue nodeValue, DateTime datetime, string timestampOrigin)
     {
-        var unixTimestamp = ((DateTimeOffset)timestamp).ToUnixTimeMilliseconds();
+        var timestamp = ((DateTimeOffset)datetime).ToUnixTimeMilliseconds();
         var currentUnixTimestamp = _clock.GetUtcNow().ToUnixTimeMilliseconds();
 
-        if (unixTimestamp > currentUnixTimestamp + 60_000)
-        {
-            _logger.Warning("Timestamp more than 60 seconds the future for node {NodeId} - {TimestampType}", nodeValue.Node.Identifier, timestampType);
-            _metrics.NumberOfFutureTimestampsFor(1);
-            return false;
-        }
+        if (timestamp <= currentUnixTimestamp + 60_000 && timestamp >= currentUnixTimestamp - 60_000) return false;
 
-        if (unixTimestamp >= currentUnixTimestamp - 60_000) return true;
-        _logger.Warning("Timestamp older than 60 seconds for node {NodeId} - {TimestampType}", nodeValue.Node.Identifier, timestampType);
-        _metrics.NumberOfOldTimestampsFor(1);
+        _logger.Warning("Timestamp from {TimestampOrigin} is invalid for node {NodeId} - {DateTime}", timestampOrigin, nodeValue.Node.Identifier, datetime);
+        _metrics.InvalidTimestampReceived(1);
+        return true;
 
-        return false;
     }
 }
