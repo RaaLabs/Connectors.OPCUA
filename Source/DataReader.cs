@@ -41,13 +41,13 @@ public class DataReader : IRetrieveData
         var (subscription, reader) = (Task.CompletedTask, Task.CompletedTask);
         try
         {
-            subscription = Task.Run(() => _subscriber.SubscribeToChangesFor(connection, _publishInterval, _subscribeNodes, handleValue, cts.Token), cts.Token);
-            reader = Task.Run(() => _reader.ReadNodesForever(connection, _readNodes, handleValue, cts.Token), cts.Token);
+            subscription = SubscribeOrSleep(connection, handleValue, cts.Token);
+            reader = ReadOrSleep(connection, handleValue, cts.Token);
 
             await Task.WhenAny(subscription, reader).ConfigureAwait(false);
             _logger.Warning("Reading data completed, it should not...");
         }
-        catch (Exception error)
+        catch (Exception error) when (error is not OperationCanceledException)
         {
             _logger.Error(error, "Failure occured while reading data");
             throw;
@@ -55,7 +55,29 @@ public class DataReader : IRetrieveData
         finally
         {
             cts.Cancel();
-            await Task.WhenAll(subscription, reader).ConfigureAwait(false);
+            try
+            {
+                await Task.WhenAll(subscription, reader).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
         }
     }
+
+    private Task SubscribeOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
+        _subscribeNodes.Count switch
+        {
+            0 => Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken),
+            _ => Task.Run(() => _subscriber.SubscribeToChangesFor(connection, _publishInterval, _subscribeNodes, handleValue, cancellationToken), cancellationToken)
+        };
+
+    private Task ReadOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
+        _readNodes.Count switch
+        {
+            0 => Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken),
+            _ => Task.Run(() => _reader.ReadNodesForever(connection, _readNodes, handleValue, cancellationToken), cancellationToken)
+        };
+
 }
