@@ -6,7 +6,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public interface ICreateSessions
 {
-    Task<Session> ConnectToServer(CancellationToken cancellationToken);
+    Task<ISession> ConnectToServer(CancellationToken cancellationToken);
 }
 
 // var application = new ApplicationConfiguration()

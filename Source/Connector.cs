@@ -35,7 +35,6 @@ public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
 
                 _logger.Information("Starting data reader");
                 await _retriever.ReadDataForever(connection, ConvertAndSendDataValue, CancellationToken.None).ConfigureAwait(false);
-                // await _retriever.ReadDataForever(connection, SendDatapoint!, CancellationToken.None).ConfigureAwait(false);
 
                 _logger.Warning("Data reader stopped");
             }
