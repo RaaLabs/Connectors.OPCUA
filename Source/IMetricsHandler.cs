@@ -10,12 +10,7 @@ using RaaLabs.Edge.Modules.EventHandling.RequestHandling;
 
 namespace RaaLabs.Edge.Connectors.OPCUA;
 
-/// <summary>
-/// Interface for registering metrics
-/// </summary>
-#pragma warning disable CS1591
-[Metrics(Prefix = "raaedge")]
-[Labels("iothub", "{IOTEDGE_IOTHUBHOSTNAME:env}", "edge_device", "{IOTEDGE_DEVICEID:env}", "edge_module", "{IOTEDGE_MODULEID:env}", "module", "{IOTEDGE_MODULEID:env}", "instance_number", "{InstanceNumber}")]
+[Metrics(Prefix = "raaedge"), Labels("iothub", "{IOTEDGE_IOTHUBHOSTNAME:env}", "edge_device", "{IOTEDGE_DEVICEID:env}", "edge_module", "{IOTEDGE_MODULEID:env}", "module", "{IOTEDGE_MODULEID:env}", "instance_number", "{InstanceNumber}")]
 public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandlerState>
 {
 
@@ -24,13 +19,21 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
 
     [Counter(Name = "messages_sent_total", Unit = "count", Description = "The total number of messages sent", Exported = true)]
     public void NumberOfMessagesSent(long value);
+
+
+
+    [Counter(Name = "opcua_session_connection_attempts_total", Unit = "count", Description = "The total number of connection attempts to the OPCUA server", Exported = true)]
+    public void NumberOfSessionConnectionAttempts(long value);
+
+    [Counter(Name = "opcua_session_connections_successful_total", Unit = "count", Description = "The total number of successful connections to the OPCUA server", Exported = true)]
+    public void NumberOfSessionConnections(long value);
+
+    [Counter(Name = "opcua_session_connection_time_seconds_total", Unit = "count", Description = "The total time spent waiting for connections to the OPCUA server to open", Exported = true)]
+    public void SessionConnectionTime(double value);
 }
 
 [ExcludeFromCodeCoverage]
 public class MetricsHandlerState
 {
-    /// <summary>
-    /// The instance number.
-    /// </summary>
     public string InstanceNumber { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString("x", CultureInfo.InvariantCulture);
 }
