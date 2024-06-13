@@ -2,4 +2,4 @@ using Opc.Ua;
 
 namespace RaaLabs.Edge.Connectors.OPCUA;
 
-public record NodeValue(string NodeId, DataValue Value);
+public record NodeValue(NodeId Node, DataValue Value);
