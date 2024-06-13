@@ -6,6 +6,8 @@ using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
 using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
+using Autofac;
+using Opc.Ua.Client;
 
 
 
@@ -21,8 +23,12 @@ static class Program
             .WithModule<Configuration>()
             .WithModule<EdgeHub>()
             .WithModule<RaaLabsDiagnostics>()
-
             .WithTask<Connector>()
+            .WithManualRegistration(_ =>
+            {
+                _.RegisterInstance(DefaultSessionFactory.Instance).As<ISessionFactory>();
+                _.RegisterType<Connector>().As<ICreateSessions>();
+            })
             .Build();
 
         application.Run().Wait();
