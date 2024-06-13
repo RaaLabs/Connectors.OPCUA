@@ -28,6 +28,7 @@ static class Program
             {
                 _.RegisterInstance(DefaultSessionFactory.Instance).As<ISessionFactory>();
                 _.RegisterType<Connector>().As<ICreateSessions>();
+                _.RegisterType<DataReader>().As<IRetrieveData>();
             })
             .Build();
 
