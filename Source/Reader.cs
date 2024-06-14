@@ -20,11 +20,13 @@ public class Reader : ICanReadNodes
     public async Task ReadNodesForever(ISession connection, IEnumerable<(NodeId node, TimeSpan readInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         _logger.Information("Starting reading nodes...");
+        var tasks = new List<Task>();
         foreach (var (node, readInterval) in nodes)
         {
-            _ = Task.Run(() => ReadNodeForever(connection, node, readInterval, handleValue, cancellationToken), cancellationToken);
+            var task = Task.Run(() => ReadNodeForever(connection, node, readInterval, handleValue, cancellationToken), cancellationToken);
+            tasks.Add(task);
         }
-        await Task.CompletedTask.ConfigureAwait(false);
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     private async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
