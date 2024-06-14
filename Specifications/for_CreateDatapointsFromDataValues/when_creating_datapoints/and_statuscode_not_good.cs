@@ -13,9 +13,9 @@ public class and_statuscode_not_good : given.a_creator
     {
         clock
             .Setup(_ => _.GetUtcNow())
-            .Returns(new DateTimeOffset(new DateTime(2024, 1, 1)));
+            .Returns(new DateTimeOffset(new DateTime(2024, 1, 1, 1, 1, 1, DateTimeKind.Utc)));
         
-        nodevalue = new NodeValue(new NodeId("ns=1;i=1"), new (){Value = 2, StatusCode = StatusCodes.BadNodeIdInvalid, SourceTimestamp = new DateTime(2024, 1, 1), ServerTimestamp = new DateTime(2024, 1, 1)});
+        nodevalue = new NodeValue(new NodeId("ns=1;i=1"), new (){Value = 2, StatusCode = StatusCodes.BadNodeIdInvalid, SourceTimestamp = new DateTime(2024, 1, 1, 1, 1, 1, DateTimeKind.Utc), ServerTimestamp = new DateTime(2024, 1, 1, 1, 1, 1, DateTimeKind.Utc)});
     };
 
     static OpcuaDatapointOutput result;
@@ -25,5 +25,5 @@ public class and_statuscode_not_good : given.a_creator
     It should_have_correct_source = () => result.Source.ShouldEqual("OPCUA");
     It should_have_correct_tag = () => result.Tag.ShouldEqual("ns=1;i=1");
     It should_have_correct_value = () => result.Value.Equals(2);
-    It should_have_correct_timestamp = () => result.Timestamp.ShouldEqual(1704063600000);
+    It should_have_correct_timestamp = () => result.Timestamp.ShouldEqual(1704070861000);
 }
