@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Opc.Ua;
@@ -20,12 +21,17 @@ public class Reader : ICanReadNodes
     public async Task ReadNodesForever(ISession connection, IEnumerable<(NodeId node, TimeSpan readInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         _logger.Information("Starting reading nodes...");
-        var tasks = new List<Task>();
-        foreach (var (node, readInterval) in nodes)
-        {
-            var task = Task.Run(() => ReadNodeForever(connection, node, readInterval, handleValue, cancellationToken), cancellationToken);
-            tasks.Add(task);
-        }
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        var tasks = nodes
+            .Select(_ => Task.Run(() =>
+                ReadNodeForever(connection, _.node, _.readInterval, handleValue, cts.Token)
+            , cts.Token))
+            .ToList();
+
+        await Task.WhenAny(tasks).ConfigureAwait(false);
+        cts.Cancel();
+
         await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
