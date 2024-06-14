@@ -20,22 +20,28 @@ public class Subscriber : ICanSubscribeToNodes
 
     public async Task SubscribeToChangesFor(ISession connection, TimeSpan publishInterval, IEnumerable<(NodeId node, TimeSpan samplingInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
+        _logger.Debug("Creating subscription with publish interval {PublishInterval}", publishInterval);
+
         using var subscription = CreateEmptySubscription(publishInterval);
         var channel = Channel.CreateUnbounded<NodeValue>(new(){ SingleReader = true });
 
         foreach (var (node, samplingInterval) in nodes)
         {
+            _logger.Debug("Adding monitored item for {Node} with sampling interval {SamplingInterval}", node, samplingInterval);
             subscription.AddItem(MonitoringFor(node, samplingInterval, channel));
         }
 
+        _logger.Debug("Adding and creating subscription");
         connection.AddSubscription(subscription);
         await subscription.CreateAsync(cancellationToken).ConfigureAwait(false);
 
         DeleteSubscriptionWhenCancelled(subscription, cancellationToken);
         CompleteChannelWhenSubscriptionCompletes(subscription, channel);
 
+        _logger.Debug("Starting to read values from subscription");
         await foreach (var value in channel.Reader.ReadAllAsync(CancellationToken.None))
         {
+            _logger.Verbose("Received value {Value} from subscription", value);
             await handleValue(value).ConfigureAwait(false);
         }
     }
@@ -52,12 +58,13 @@ public class Subscriber : ICanSubscribeToNodes
         {
             if (notification.NotificationValue is not MonitoredItemNotification monitored)
             {
+                _logger.Verbose("Received notification without monitored item value in subscription");
                 return;
             }
 
             if (!writer.TryWrite(new(nodeId, monitored.Value)))
             {
-
+                _logger.Error("Failed to write value from subscription to channel. Will drop the received value");
             }
         };
 
@@ -67,6 +74,7 @@ public class Subscriber : ICanSubscribeToNodes
     private void DeleteSubscriptionWhenCancelled(Subscription subscription, CancellationToken cancellationToken) =>
         cancellationToken.Register(() =>
         {
+            _logger.Debug("CancellationToken cancelled, deleting subscription");
             subscription.Delete(true);
         });
 
@@ -74,15 +82,19 @@ public class Subscriber : ICanSubscribeToNodes
     {
         subscription.PublishStatusChanged += (_, changed) =>
         {
+            _logger.Debug("Subscription publish status changed to {Status}", changed.Status);
             if ((changed.Status & PublishStateChangedMask.Stopped) != 0)
             {
+                _logger.Debug("Subscription stopped, completing channel");
                 writer.Complete();
             }
         };
         subscription.StateChanged += (_, changed) =>
         {
+            _logger.Debug("Subscription state changed to {Status}", changed.Status);
             if ((changed.Status & SubscriptionChangeMask.Deleted) != 0)
             {
+                _logger.Debug("Subscription deleted, completing channel");
                 writer.Complete();
             }
         };

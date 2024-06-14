@@ -41,6 +41,8 @@ public class DataReader : IRetrieveData
         var (subscription, reader) = (Task.CompletedTask, Task.CompletedTask);
         try
         {
+            _logger.Information("Starting data reader for {SubscriptionCount} subscriptions and {ReadCount} reads", _subscribeNodes.Count, _readNodes.Count);
+
             subscription = SubscribeOrSleep(connection, handleValue, cts.Token);
             reader = ReadOrSleep(connection, handleValue, cts.Token);
 
@@ -57,6 +59,7 @@ public class DataReader : IRetrieveData
             cts.Cancel();
             try
             {
+                _logger.Information("Waiting for subscription and reader to complete");
                 await Task.WhenAll(subscription, reader).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
