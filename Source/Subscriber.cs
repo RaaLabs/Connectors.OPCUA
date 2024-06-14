@@ -11,10 +11,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class Subscriber : ICanSubscribeToNodes
 {
+    private readonly IMetricsHandler _metrics;
     private readonly ILogger _logger;
 
-    public Subscriber(ILogger logger)
+    public Subscriber(IMetricsHandler metrics, ILogger logger)
     {
+        _metrics = metrics;
         _logger = logger;
     }
 
