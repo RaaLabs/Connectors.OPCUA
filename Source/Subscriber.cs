@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ public class Subscriber : ICanSubscribeToNodes
     public async Task SubscribeToChangesFor(ISession connection, TimeSpan publishInterval, IEnumerable<(NodeId node, TimeSpan samplingInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         _logger.Debug("Creating subscription with publish interval {PublishInterval}", publishInterval);
+        _metrics.NumberOfSubscriptionAttempts(1);
+        var timer = Stopwatch.StartNew();
 
         using var subscription = CreateEmptySubscription(publishInterval);
         var channel = Channel.CreateUnbounded<NodeValue>(new(){ SingleReader = true });
@@ -40,10 +43,14 @@ public class Subscriber : ICanSubscribeToNodes
         DeleteSubscriptionWhenCancelled(subscription, cancellationToken);
         CompleteChannelWhenSubscriptionCompletes(subscription, channel);
 
+        _metrics.NumberOfSubscriptions(1);
+        _metrics.SubscriptionSetupTime(timer.Elapsed.TotalSeconds);
+
         _logger.Debug("Starting to read values from subscription");
         await foreach (var value in channel.Reader.ReadAllAsync(CancellationToken.None))
         {
             _logger.Verbose("Received value {Value} from subscription", value);
+            _metrics.NumberOfReceivedMonitorNotifications(1);
             await handleValue(value).ConfigureAwait(false);
         }
     }

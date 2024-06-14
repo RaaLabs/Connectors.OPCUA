@@ -20,12 +20,15 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
     [Counter(Name = "messages_sent_total", Unit = "count", Description = "The total number of messages sent", Exported = true)]
     public void NumberOfMessagesSent(int value);
 
+    #region DataPointParser.cs
     [Counter(Name = "opcua_bad_statuscode_received", Unit = "count", Description = "The total number of bad status code received from OPCUA server", Exported = true)]
     public void NumberOfBadStatusCodesFor(int value, string nodeId);
 
     [Counter(Name = "opcua_invalid_timestamp_received", Unit = "count", Description = "The total number of invalid timestamps received from OPCUA server or source", Exported = true)]
     public void InvalidTimestampReceived(int value);
+    #endregion
 
+    #region Client.cs
     [Counter(Name = "opcua_session_connection_attempts_total", Unit = "count", Description = "The total number of connection attempts to the OPCUA server", Exported = true)]
     public void NumberOfSessionConnectionAttempts(long value);
 
@@ -34,6 +37,21 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
 
     [Counter(Name = "opcua_session_connection_time_seconds_total", Unit = "count", Description = "The total time spent waiting for connections to the OPCUA server to open", Exported = true)]
     public void SessionConnectionTime(double value);
+    #endregion
+
+    #region Subscriber.cs
+    [Counter(Name = "opcua_subscription_attempts_total", Unit = "count", Description = "The total number of subscription attempts to the OPCUA server", Exported = true)]
+    public void NumberOfSubscriptionAttempts(long value);
+
+    [Counter(Name = "opcua_subscriptions_total", Unit = "count", Description = "The total number of successful subscriptions to the OPCUA server", Exported = true)]
+    public void NumberOfSubscriptions(long value);
+
+    [Counter(Name = "opcua_subscription_setup_time_seconds_total", Unit = "count", Description = "The total time spent setting up subscriptions to the OPCUA server", Exported = true)]
+    public void SubscriptionSetupTime(double value);
+
+    [Counter(Name = "opcua_subscription_notifications_received_total", Unit = "count", Description = "The total number of notifications received from the OPCUA server", Exported = true)]
+    public void NumberOfReceivedMonitorNotifications(long value);
+    #endregion
 }
 
 [ExcludeFromCodeCoverage]
