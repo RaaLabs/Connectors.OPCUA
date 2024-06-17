@@ -81,10 +81,5 @@ public class Client : ICreateSessions
         ApplicationName = "RaaEDGE OPC UA Connector",
         ApplicationUri = "https://github.com/RaaLabs/Connectors.OPCUA",
         ProductUri = "https://github.com/RaaLabs",
-
-        ClientConfiguration = new()
-        {
-            DefaultSessionTimeout = 30*60*1000,
-        },
     };
 }

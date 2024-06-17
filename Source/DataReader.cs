@@ -47,25 +47,27 @@ public class DataReader : IRetrieveData
             reader = ReadOrSleep(connection, handleValue, cts.Token);
 
             await Task.WhenAny(subscription, reader).ConfigureAwait(false);
+
+            ThrowIfFailedWithError(subscription);
+            ThrowIfFailedWithError(reader);
+
             _logger.Warning("Reading data completed, it should not...");
         }
         catch (Exception error) when (error is not OperationCanceledException)
         {
             _logger.Error(error, "Failure occured while reading data");
-            throw;
         }
-        finally
+
+        cts.Cancel();
+        try
         {
-            cts.Cancel();
-            try
-            {
-                _logger.Information("Waiting for subscription and reader to complete");
-                await Task.WhenAll(subscription, reader).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignore
-            }
+            _logger.Information("Waiting for subscription and reader to complete");
+            await subscription.ConfigureAwait(false);
+            await reader.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore
         }
     }
 
@@ -83,4 +85,11 @@ public class DataReader : IRetrieveData
             _ => Task.Run(() => _reader.ReadNodesForever(connection, _readNodes, handleValue, cancellationToken), cancellationToken)
         };
 
+    private static void ThrowIfFailedWithError(Task task)
+    {
+        if (task.Exception?.GetBaseException() is {} error and not OperationCanceledException)
+        {
+            throw error;
+        }
+    }
 }

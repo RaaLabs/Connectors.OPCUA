@@ -12,6 +12,7 @@ namespace RaaLabs.Edge.Connectors.OPCUA.for_Subscriber.given;
 
 public class a_subscriber_and_arguments
 {
+    protected static Mock<ILogger> logger;
     protected static Subscriber subscriber;
 
     protected static Mock<ISession> session;
@@ -19,7 +20,8 @@ public class a_subscriber_and_arguments
 
     Establish context = () =>
     {
-        subscriber = new(Mock.Of<IMetricsHandler>(), Mock.Of<ILogger>());
+        logger = new();
+        subscriber = new(Mock.Of<IMetricsHandler>(), logger.Object);
 
         session = new();
         session
