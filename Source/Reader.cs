@@ -20,7 +20,7 @@ public class Reader : ICanReadNodes
 
     public async Task ReadNodesForever(ISession connection, IEnumerable<(NodeId node, TimeSpan readInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
-        _logger.Information("Starting reading nodes...");
+        _logger.Information("Start reading nodes...");
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         var tasks = nodes
