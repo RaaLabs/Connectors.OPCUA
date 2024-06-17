@@ -2,8 +2,6 @@
 // Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Machine.Specifications;
 using Moq;
@@ -16,27 +14,11 @@ public class a_reader
 {
     protected static Reader reader;
     protected static Mock<ISession> connection;
-    protected static CancellationTokenSource cts;
-    protected static List<NodeValue> handled_values;
     protected static Func<NodeValue, Task> handler;
     
     Establish context = () =>
     {
         connection = new();
         reader = new(Mock.Of<ILogger>());
-        cts = new();
-        
-        var values = handled_values = [];
-        
-        handler = _ => 
-        {
-            handled_values.Add(_);
-            return Task.CompletedTask;
-        };
-    };
-
-    Cleanup after = () =>
-    {
-        cts.Dispose();
     };
 }
