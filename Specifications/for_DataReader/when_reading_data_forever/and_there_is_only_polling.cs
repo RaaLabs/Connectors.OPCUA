@@ -1,3 +1,6 @@
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.Threading;

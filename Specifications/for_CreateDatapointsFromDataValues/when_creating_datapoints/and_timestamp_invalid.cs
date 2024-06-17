@@ -1,9 +1,10 @@
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the GPLv2 License. See LICENSE file in the project root for full license information.
+
 using System;
 using Machine.Specifications;
-using Moq;
 using Opc.Ua;
 using RaaLabs.Edge.Connectors.OPCUA.Events;
-using Serilog;
 using It = Machine.Specifications.It;
 
 namespace RaaLabs.Edge.Connectors.OPCUA.for_CreateDatapointsFromDataValues.when_creating_datapoints;
