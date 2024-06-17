@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Machine.Specifications;
 using Opc.Ua;
+using Moq;
+using It = Machine.Specifications.It;
 
 namespace RaaLabs.Edge.Connectors.OPCUA.for_Reader.when_reading_nodes_forever;
 
@@ -18,14 +20,11 @@ public class and_datavalue_found : given.a_reader
     Establish context = async () =>
     {
         nodes = [(new NodeId(321), TimeSpan.FromSeconds(1))];
-        
+
         connection
             .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(new DataValue("reading value")));
-        
-        connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(new DataValue("reading value 2")));
+            .Callback(() => cancellation_token_source.Cancel())
+            .ReturnsAsync(new DataValue("reading value"));
         
         handled_values = [];
         
@@ -34,15 +33,11 @@ public class and_datavalue_found : given.a_reader
             handled_values.Add(_);
             return Task.CompletedTask;
         };
-
-        cancellation_token_source.CancelAfter(TimeSpan.FromSeconds(2));
-        
     };
 
     Because of = async () => 
     {
         await reader.ReadNodesForever(connection.Object, nodes, handler, cancellation_token_source.Token);
-        connection.Object.Close();
     };
 
     It should_have_read_the_values = () => handled_values.ShouldContainOnly(new NodeValue(new (321), new ("reading value")));
