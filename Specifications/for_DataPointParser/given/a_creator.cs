@@ -6,7 +6,7 @@ using Machine.Specifications;
 using Moq;
 using Serilog;
 
-namespace RaaLabs.Edge.Connectors.OPCUA.for_CreateDatapointsFromDataValues.given;
+namespace RaaLabs.Edge.Connectors.OPCUA.for_DataPointParser.given;
 
 public class a_creator
 {

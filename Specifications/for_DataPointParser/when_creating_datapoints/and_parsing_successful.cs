@@ -8,7 +8,7 @@ using Opc.Ua;
 using RaaLabs.Edge.Connectors.OPCUA.Events;
 using It = Machine.Specifications.It;
 
-namespace RaaLabs.Edge.Connectors.OPCUA.for_CreateDatapointsFromDataValues.when_creating_datapoints;
+namespace RaaLabs.Edge.Connectors.OPCUA.for_DataPointParser.when_creating_datapoints;
 
 public class and_parsing_successful : given.a_creator
 {
