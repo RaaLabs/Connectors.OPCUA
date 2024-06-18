@@ -16,13 +16,15 @@ public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
     private readonly IRetrieveData _retriever;
     private readonly ICreateDatapointsFromDataValues _datapoints;
     private readonly ILogger _logger;
+    private readonly IMetricsHandler _metrics;
 
-    public Connector(ICreateSessions sessions, IRetrieveData retriever, ICreateDatapointsFromDataValues datapoints, ILogger logger)
+    public Connector(ICreateSessions sessions, IRetrieveData retriever, ICreateDatapointsFromDataValues datapoints, ILogger logger, IMetricsHandler metrics)
     {
         _sessions = sessions;
         _retriever = retriever;
         _datapoints = datapoints;
         _logger = logger;
+        _metrics = metrics;
     }
 
     public event AsyncEventEmitter<OpcuaDatapointOutput>? SendDatapoint;
@@ -49,6 +51,9 @@ public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
         }
     }
 
-    private Task ConvertAndSendDataValue(NodeValue value) =>
-        SendDatapoint!(_datapoints.CreateDatapointFrom(value));
+    private Task ConvertAndSendDataValue(NodeValue value)
+    {
+        _metrics.NumberOfMessagesSent(1);
+        return SendDatapoint!(_datapoints.CreateDatapointFrom(value));
+    }
 }

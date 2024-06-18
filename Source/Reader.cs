@@ -15,15 +15,18 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 public class Reader : ICanReadNodes
 {
     private readonly ILogger _logger;
+    private readonly IMetricsHandler _metrics;
 
-    public Reader(ILogger logger)
+    public Reader(ILogger logger, IMetricsHandler metrics)
     {
         _logger = logger;
+        _metrics = metrics;
     }
 
     public async Task ReadNodesForever(ISession connection, IEnumerable<(NodeId node, TimeSpan readInterval)> nodes, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         _logger.Information("Start reading nodes...");
+        _metrics.NumberOfReadingsStarted(1);
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         var tasks = nodes
@@ -42,6 +45,7 @@ public class Reader : ICanReadNodes
         catch (OperationCanceledException)
         {
             _logger.Information("Read operation was cancelled");
+            _metrics.NumberOfReadingsCancelled(1);
         }
         _logger.Debug("Read operation completed...");
     }

@@ -26,7 +26,7 @@ public class a_connector
 
         datapoints = new();
 
-        connector = new(sessions.Object, retriever.Object, datapoints.Object, Mock.Of<ILogger>());
+        connector = new(sessions.Object, retriever.Object, datapoints.Object, Mock.Of<ILogger>(), Mock.Of<IMetricsHandler>());
 
         var collected = sent_datapoints = [];
         connector.SendDatapoint += _ =>

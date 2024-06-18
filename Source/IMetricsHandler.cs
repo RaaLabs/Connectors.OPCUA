@@ -14,9 +14,6 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandlerState>
 {
 
-    [Counter(Name = "messages_received_total", Unit = "count", Description = "The total number of messages received", Exported = true)]
-    public void NumberOfMessagesReceived(int value);
-
     [Counter(Name = "messages_sent_total", Unit = "count", Description = "The total number of messages sent", Exported = true)]
     public void NumberOfMessagesSent(int value);
 
@@ -54,6 +51,14 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
 
     [Counter(Name = "opcua_subscription_notifications_received_total", Unit = "count", Description = "The total number of notifications received from the OPCUA server", Exported = true)]
     public void NumberOfReceivedMonitorNotifications(long value);
+    #endregion
+
+    #region Reader.cs
+    [Counter(Name = "opcua_reader_operations_cancelled", Unit = "count", Description = "The total number of reading operations cancelled from OPCUA server", Exported = true)]
+    public void NumberOfReadingsCancelled(long value);
+
+    [Counter(Name = "opcua_readings_started", Unit = "count", Description = "The total number of reading operations started from OPCUA server", Exported = true)]
+    public void NumberOfReadingsStarted(long value);
     #endregion
 }
 

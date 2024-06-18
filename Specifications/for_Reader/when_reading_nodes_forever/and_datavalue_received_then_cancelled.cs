@@ -12,7 +12,7 @@ using It = Machine.Specifications.It;
 
 namespace RaaLabs.Edge.Connectors.OPCUA.for_Reader.when_reading_nodes_forever;
 
-public class and_datavalue_found : given.a_reader
+public class and_datavalue_received_then_cancelled : given.a_reader
 {
     static IEnumerable<(NodeId node, TimeSpan readInterval)> nodes;
     static List<NodeValue> handled_values;
@@ -35,10 +35,7 @@ public class and_datavalue_found : given.a_reader
         };
     };
 
-    Because of = async () => 
-    {
-        await reader.ReadNodesForever(connection.Object, nodes, handler, cancellation_token_source.Token);
-    };
+    Because of = async () => await reader.ReadNodesForever(connection.Object, nodes, handler, cancellation_token_source.Token);
 
     It should_have_read_the_values = () => handled_values.ShouldContainOnly(new NodeValue(new (321), new ("reading value")));
 }

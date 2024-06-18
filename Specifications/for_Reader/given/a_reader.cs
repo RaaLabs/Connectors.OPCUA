@@ -22,7 +22,7 @@ public class a_reader
     Establish context = () =>
     {
         connection = new();
-        reader = new(Mock.Of<ILogger>());
+        reader = new(Mock.Of<ILogger>(), Mock.Of<IMetricsHandler>());
         cancellation_token_source = new();
     };
 

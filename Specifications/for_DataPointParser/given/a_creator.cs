@@ -27,6 +27,6 @@ public class a_creator
             ServerUrl = "server-url"
         };
         
-        parser = new DataPointParser(clock.Object, logger.Object, metrics.Object, configuration);
+        parser = new DataPointParser(configuration, logger.Object, metrics.Object, clock.Object);
     };
 }
