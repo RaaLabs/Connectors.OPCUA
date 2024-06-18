@@ -53,12 +53,12 @@ public class DataPointParser : ICreateDatapointsFromDataValues
 
         if (dateTimeOffset > utcNow + TimeSpan.FromMinutes(15))
         {
-            _logger.Warning("Timestamp more than 15 minutes the future for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
+            _logger.Warning("Timestamp more than 15 minutes from the future for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
             _metrics.NumberOfFutureTimestampsFor(1, nodeValue.Node.ToString());
         }
         else if (dateTimeOffset < utcNow - TimeSpan.FromMinutes(15))
         {
-            _logger.Warning("Timestamp older than  15 minutes for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
+            _logger.Warning("Timestamp older than 15 minutes for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
             _metrics.NumberOfOldTimestampsFor(1, nodeValue.Node.ToString());
         }
     }
