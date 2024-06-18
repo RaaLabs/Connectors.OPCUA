@@ -19,12 +19,12 @@ The module is configured using a JSON file. `connector.json` represents the conn
     "publishingIntervalSeconds": 1.0,
     "nodes": [
         {
-            "id": "ns=3;i=1002",
+            "nodeId": "ns=3;i=1002",
             "subscribeIntervalSeconds": 1.0,
             "readIntervalSeconds": 1.0
         },
         {
-            "id": "ns=3;i=1001",
+            "nodeId": "ns=3;i=1001",
             "readIntervalSeconds": 1.0
         }
     ]
