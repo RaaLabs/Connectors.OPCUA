@@ -16,13 +16,18 @@ The module is configured using a JSON file. `connector.json` represents the conn
 ```json
 {
     "serverUrl": "opc.tcp://<HOST>:<PORT>/<SERVERNAME>",
-    "nodeIds": [
-        "ns=3;i=1002",
-        "ns=3;i=1001"
-    ],
-    "opcUaServerCertificateIssuer": "Name of certificate issuer", // used to verify untrusted server certificates
-    "opcUaServerCertificateSubject": "Issuer subject",            // used to verify untrusted server certificates
-    "opcUaServerAutoAcceptUntrustedCertificates": false
+    "publishingIntervalSeconds": 1.0,
+    "nodes": [
+        {
+            "id": "ns=3;i=1002",
+            "subscribeIntervalSeconds": 1.0,
+            "readIntervalSeconds": 1.0
+        },
+        {
+            "id": "ns=3;i=1001",
+            "readIntervalSeconds": 1.0
+        }
+    ]
 }
 ```
 

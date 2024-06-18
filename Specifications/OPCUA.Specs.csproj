@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>RaaLabs.Connectors.OPCUA.Specs</RootNamespace>
-    <AssemblyName>RaaLabs.Connectors.OPCUA.Specs</AssemblyName>
+    <RootNamespace>RaaLabs.Edge.Connectors.OPCUA</RootNamespace>
+    <AssemblyName>RaaLabs.Edge.Connectors.OPCUA.Specs</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extras.Moq" Version="6.1.1" />

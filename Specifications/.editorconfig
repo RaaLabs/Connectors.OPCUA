@@ -1,0 +1,23 @@
+[*.cs]
+dotnet_diagnostic.IDE0044.severity = none
+dotnet_diagnostic.IDE0052.severity = none
+dotnet_diagnostic.CA1825.severity  = none
+dotnet_diagnostic.CS8618.severity  = none
+dotnet_diagnostic.CA2211.severity  = none
+
+dotnet_style_require_accessibility_modifiers = never:error
+
+dotnet_naming_rule.classes_read_as_sentences.symbols = specification_classes
+dotnet_naming_rule.classes_read_as_sentences.severity = error
+dotnet_naming_rule.classes_read_as_sentences.style = snake_case_classes
+dotnet_naming_symbols.specification_classes.applicable_kinds = class
+dotnet_naming_symbols.specification_classes.applicable_accessibilities = public, protected
+dotnet_naming_rule.fields_read_as_sentences.symbols = specification_fields
+dotnet_naming_rule.fields_read_as_sentences.severity = error
+dotnet_naming_rule.fields_read_as_sentences.style = snake_case_classes
+dotnet_naming_symbols.specification_fields.applicable_kinds = field, property
+dotnet_naming_symbols.specification_fields.applicable_accessibilities = public, private, protected
+dotnet_naming_style.snake_case_classes.capitalization = all_lower
+dotnet_naming_style.snake_case_classes.word_separator = _
+
+dotnet_naming_rule.private_members_with_underscore.severity = none
