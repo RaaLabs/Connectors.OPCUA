@@ -24,8 +24,11 @@ public interface IMetricsHandler : IMetricsClient, IWithStateFrom<MetricsHandler
     [Counter(Name = "opcua_bad_statuscode_received", Unit = "count", Description = "The total number of bad status code received from OPCUA server", Exported = true)]
     public void NumberOfBadStatusCodesFor(int value, string nodeId);
 
-    [Counter(Name = "opcua_invalid_timestamp_received", Unit = "count", Description = "The total number of invalid timestamps received from OPCUA server or source", Exported = true)]
-    public void InvalidTimestampReceived(int value);
+    [Counter(Name = "opcua_future_timestamp_received", Unit = "count", Description = "The total number of timestamps from the future received from OPCUA server or source", Exported = true)]
+    public void NumberOfFutureTimestampsFor(int value, string type);
+
+    [Counter(Name = "opcua_past_timestamp_received", Unit = "count", Description = "The total number of timestamps from the past received from OPCUA server or source", Exported = true)]
+    public void NumberOfOldTimestampsFor(int value, string type);
     #endregion
 
     #region Client.cs

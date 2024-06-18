@@ -35,8 +35,15 @@ public class Reader : ICanReadNodes
         await Task.WhenAny(tasks).ConfigureAwait(false);
         cts.Cancel();
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
-        _logger.Information("Read operation was cancelled");
+        try
+        {
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.Information("Read operation was cancelled");
+        }
+        _logger.Debug("Read operation completed...");
     }
 
     private async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)

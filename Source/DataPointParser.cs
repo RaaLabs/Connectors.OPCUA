@@ -26,8 +26,9 @@ public class DataPointParser : ICreateDatapointsFromDataValues
 
     public OpcuaDatapointOutput CreateDatapointFrom(NodeValue nodeValue)
     {
-        ValidateStatusCodeFor(nodeValue);
-        ValidateTimestampFrom(nodeValue);
+        LogWarningIfStatusCodeIsNotGood(nodeValue);
+        CheckTimestamps(nodeValue, nodeValue.Value.ServerTimestamp, "Server");
+        CheckTimestamps(nodeValue, nodeValue.Value.SourceTimestamp, "Source");
 
         return new()
         {
@@ -38,7 +39,7 @@ public class DataPointParser : ICreateDatapointsFromDataValues
         };
     }
 
-    private void ValidateStatusCodeFor(NodeValue nodeValue)
+    private void LogWarningIfStatusCodeIsNotGood(NodeValue nodeValue)
     {
         if (StatusCode.IsGood(nodeValue.Value.StatusCode) && StatusCode.IsNotBad(nodeValue.Value.StatusCode)) return;
 
@@ -46,25 +47,20 @@ public class DataPointParser : ICreateDatapointsFromDataValues
         _metrics.NumberOfBadStatusCodesFor(1, nodeValue.Node.ToString()!);
     }
 
-    private void ValidateTimestampFrom(NodeValue nodeValue)
+    private void CheckTimestamps(NodeValue nodeValue, DateTime timestamp, string timestampType)
     {
-        var serverTimestamp = ((DateTimeOffset)nodeValue.Value.ServerTimestamp).ToUnixTimeMilliseconds();
-        var sourceTimestamp = ((DateTimeOffset)nodeValue.Value.SourceTimestamp).ToUnixTimeMilliseconds();
+        var dateTimeOffset = (DateTimeOffset) timestamp;
+        var utcNow = _clock.GetUtcNow();
 
-        var currentUnixTimestamp = _clock.GetUtcNow().ToUnixTimeMilliseconds();
-
-        var diffServerTime = Math.Abs(serverTimestamp - currentUnixTimestamp);
-        if (diffServerTime > 600_000)
+        if (dateTimeOffset > utcNow + TimeSpan.FromMinutes(15))
         {
-            _logger.Warning("Timestamp from Server is invalid for node {NodeId} - {DateTime}", nodeValue.Node, nodeValue.Value.ServerTimestamp);
-            _metrics.InvalidTimestampReceived(1);
+            _logger.Warning("Timestamp more than 15 minutes the future for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
+            _metrics.NumberOfFutureTimestampsFor(1, nodeValue.Node.ToString());
         }
-
-        var diffSourceTime = Math.Abs(sourceTimestamp - currentUnixTimestamp);
-        if (diffSourceTime > 600_000)
+        else if (dateTimeOffset < utcNow - TimeSpan.FromMinutes(15))
         {
-            _logger.Warning("Timestamp from Source is invalid for node {NodeId} - {DateTime}", nodeValue.Node, nodeValue.Value.SourceTimestamp);
-            _metrics.InvalidTimestampReceived(1);
+            _logger.Warning("Timestamp older than  15 minutes for node {NodeValueNode} - {Timestamp}. Timestamp from {Source} is never used as property for OpcuaDatapointOutput", nodeValue.Node, timestamp, timestampType);
+            _metrics.NumberOfOldTimestampsFor(1, nodeValue.Node.ToString());
         }
     }
 }
