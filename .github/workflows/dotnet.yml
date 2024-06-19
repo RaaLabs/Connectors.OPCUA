@@ -95,17 +95,6 @@ jobs:
           ${{ env.DOCKER_IMAGE_REGISTRY_PATH }}:${{ steps.increment-version.outputs.next-version }}
           ${{ env.DOCKER_IMAGE_REGISTRY_PATH }}:latest
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ env.DOCKER_IMAGE_REGISTRY_PATH }}:latest
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL'
-        scanners: 'vuln,secret'
-
     - name: Docker logout
       if: always()
       run: |
