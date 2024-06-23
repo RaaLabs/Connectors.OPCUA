@@ -8,7 +8,7 @@
     <PackageReference Include="Autofac.Extras.Moq" Version="6.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="Machine.Specifications" Version="1.1.1" />
+    <PackageReference Include="Machine.Specifications" Version="1.1.2" />
     <PackageReference Include="Machine.Specifications.Runner.Console" Version="1.0.0" />
     <PackageReference Include="Machine.Specifications.Runner.VisualStudio" Version="2.10.2" />
     <PackageReference Include="Machine.Specifications.Should" Version="1.0.0" />
