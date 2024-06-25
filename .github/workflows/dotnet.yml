@@ -54,7 +54,7 @@ jobs:
         failure-threshold: error
 
     - name: Docker Build
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       if: ${{ steps.context.outputs.should-publish == 'false' }}
       with:
         push: false
@@ -78,7 +78,7 @@ jobs:
         release-type: ${{ steps.context.outputs.release-type }}
 
     - name: Docker push
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       if: ${{ steps.context.outputs.should-publish == 'true' && inputs.IMAGE_NAME != '' }}
       with:
         push: true
