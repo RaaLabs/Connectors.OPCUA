@@ -50,7 +50,7 @@ public class Reader : ICanReadNodes
         _logger.Debug("Read operation completed...");
     }
 
-    async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
+    static async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         using var timer = new PeriodicTimer(readInterval);
         while (!cancellationToken.IsCancellationRequested)
