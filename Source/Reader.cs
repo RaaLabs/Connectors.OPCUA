@@ -14,8 +14,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class Reader : ICanReadNodes
 {
-    private readonly ILogger _logger;
-    private readonly IMetricsHandler _metrics;
+    readonly ILogger _logger;
+    readonly IMetricsHandler _metrics;
 
     public Reader(ILogger logger, IMetricsHandler metrics)
     {
@@ -50,7 +50,7 @@ public class Reader : ICanReadNodes
         _logger.Debug("Read operation completed...");
     }
 
-    private async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
+    async Task ReadNodeForever(ISession connection, NodeId node, TimeSpan readInterval, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken)
     {
         using var timer = new PeriodicTimer(readInterval);
         while (!cancellationToken.IsCancellationRequested)

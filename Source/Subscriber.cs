@@ -15,8 +15,8 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class Subscriber : ICanSubscribeToNodes
 {
-    private readonly IMetricsHandler _metrics;
-    private readonly ILogger _logger;
+    readonly IMetricsHandler _metrics;
+    readonly ILogger _logger;
 
     public Subscriber(IMetricsHandler metrics, ILogger logger)
     {
@@ -58,7 +58,7 @@ public class Subscriber : ICanSubscribeToNodes
         }
     }
 
-    private MonitoredItem MonitoringFor(NodeId nodeId, TimeSpan samplingInterval, ChannelWriter<NodeValue> writer)
+    MonitoredItem MonitoringFor(NodeId nodeId, TimeSpan samplingInterval, ChannelWriter<NodeValue> writer)
     {
         var monitored = new MonitoredItem()
         {
@@ -83,14 +83,14 @@ public class Subscriber : ICanSubscribeToNodes
         return monitored;
     }
 
-    private void DeleteSubscriptionWhenCancelled(Subscription subscription, CancellationToken cancellationToken) =>
+    void DeleteSubscriptionWhenCancelled(Subscription subscription, CancellationToken cancellationToken) =>
         cancellationToken.Register(() =>
         {
             _logger.Debug("CancellationToken cancelled, deleting subscription");
             subscription.Delete(true);
         });
 
-    private void CompleteChannelWhenSubscriptionCompletes(Subscription subscription, ChannelWriter<NodeValue> writer)
+    void CompleteChannelWhenSubscriptionCompletes(Subscription subscription, ChannelWriter<NodeValue> writer)
     {
         subscription.PublishStatusChanged += (_, changed) =>
         {
@@ -112,7 +112,7 @@ public class Subscriber : ICanSubscribeToNodes
         };
     }
 
-    private static Subscription CreateEmptySubscription(TimeSpan publishInterval) =>
+    static Subscription CreateEmptySubscription(TimeSpan publishInterval) =>
         new()
         {
             PublishingInterval = (int)publishInterval.TotalMilliseconds,
