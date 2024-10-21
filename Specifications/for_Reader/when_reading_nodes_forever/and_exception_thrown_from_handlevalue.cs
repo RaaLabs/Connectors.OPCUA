@@ -16,7 +16,7 @@ public class and_exception_thrown_from_handlevalue : given.a_reader
     static IEnumerable<(NodeId node, TimeSpan readInterval)> nodes;
     static CancellationToken ct;
     
-    Establish context = async () =>
+    Establish context = () =>
     {
         nodes = [
             (new NodeId(321), TimeSpan.FromSeconds(1)),

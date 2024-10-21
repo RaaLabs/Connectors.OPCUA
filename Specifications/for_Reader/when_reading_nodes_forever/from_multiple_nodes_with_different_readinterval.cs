@@ -17,7 +17,7 @@ public class from_multiple_nodes_with_different_readinterval : given.a_reader
     static IEnumerable<(NodeId node, TimeSpan readInterval)> nodes;
     static List<NodeValue> handled_values;
     
-    Establish context = async () =>
+    Establish context = () =>
     {
         nodes = [
             (new NodeId(321), TimeSpan.FromSeconds(1)),
