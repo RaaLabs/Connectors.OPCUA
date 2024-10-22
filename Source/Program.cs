@@ -10,14 +10,12 @@ using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
 using Autofac;
 using Opc.Ua.Client;
 
-
-
 namespace RaaLabs.Edge.Connectors.OPCUA;
 
 [ExcludeFromCodeCoverage]
 static class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         var application = new ApplicationBuilder()
             .WithModule<EventHandling>()

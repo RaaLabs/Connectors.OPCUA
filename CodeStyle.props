@@ -2,7 +2,7 @@
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <NoWarn>$(NoWarn);SYSLIB1006;CS1591;IL2104;IL2026;CS1570;CS1573</NoWarn>
+        <NoWarn>$(NoWarn);SYSLIB1006;CS1591</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 </Project>

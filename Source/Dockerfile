@@ -3,8 +3,8 @@ ARG TARGETARCH
 WORKDIR /app
 
 VOLUME [ "/app/config" ]
-
 COPY Source/ ./Source/
+COPY CodeStyle.props .
 
 WORKDIR /app/Source
 
