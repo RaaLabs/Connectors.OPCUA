@@ -21,3 +21,5 @@ dotnet_naming_style.snake_case_classes.capitalization = all_lower
 dotnet_naming_style.snake_case_classes.word_separator = _
 
 dotnet_naming_rule.private_members_with_underscore.severity = none
+dotnet_naming_rule.private_members_with_underscore.symbols = specification_fields
+dotnet_naming_rule.private_members_with_underscore.style = snake_case_classes
