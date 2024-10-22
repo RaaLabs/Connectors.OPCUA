@@ -12,11 +12,11 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
 {
-    private readonly ICreateSessions _sessions;
-    private readonly IRetrieveData _retriever;
-    private readonly ICreateDatapointsFromDataValues _datapoints;
-    private readonly ILogger _logger;
-    private readonly IMetricsHandler _metrics;
+    readonly ICreateSessions _sessions;
+    readonly IRetrieveData _retriever;
+    readonly ICreateDatapointsFromDataValues _datapoints;
+    readonly ILogger _logger;
+    readonly IMetricsHandler _metrics;
 
     public Connector(ICreateSessions sessions, IRetrieveData retriever, ICreateDatapointsFromDataValues datapoints, ILogger logger, IMetricsHandler metrics)
     {
@@ -51,7 +51,7 @@ public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
         }
     }
 
-    private Task ConvertAndSendDataValue(NodeValue value)
+    Task ConvertAndSendDataValue(NodeValue value)
     {
         _metrics.NumberOfMessagesSent(1);
         return SendDatapoint!(_datapoints.CreateDatapointFrom(value));

@@ -17,7 +17,7 @@ public class and_datavalue_received_then_cancelled : given.a_reader
     static IEnumerable<(NodeId node, TimeSpan readInterval)> nodes;
     static List<NodeValue> handled_values;
     
-    Establish context = async () =>
+    Establish context = () =>
     {
         nodes = [(new NodeId(321), TimeSpan.FromSeconds(1))];
 

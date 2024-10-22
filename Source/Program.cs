@@ -24,6 +24,7 @@ static class Program
             .WithModule<Configuration>()
             .WithModule<EdgeHub>()
             .WithModule<RaaLabsDiagnostics>()
+            .WithHandler<HealthCheck>()
             .WithTask<Connector>()
             .WithManualRegistration(_ =>
             {

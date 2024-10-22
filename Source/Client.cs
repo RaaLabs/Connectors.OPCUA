@@ -13,12 +13,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class Client : ICreateSessions
 {
-    private readonly ApplicationConfiguration _application;
-    private readonly ConfiguredEndpoint _endpoint;
-    private readonly UserIdentity _identity;
-    private readonly ISessionFactory _factory;
-    private readonly IMetricsHandler _metrics;
-    private readonly ILogger _logger;
+    readonly ApplicationConfiguration _application;
+    readonly ConfiguredEndpoint _endpoint;
+    readonly UserIdentity _identity;
+    readonly ISessionFactory _factory;
+    readonly IMetricsHandler _metrics;
+    readonly ILogger _logger;
 
     public Client(ConnectorConfiguration config, ISessionFactory factory, IMetricsHandler metrics, ILogger logger)
     {
@@ -66,7 +66,7 @@ public class Client : ICreateSessions
         }
     }
 
-    private static (ConfiguredEndpoint, UserIdentity) ConnectAnonymouslyToAnyServerOn(string url)
+    static (ConfiguredEndpoint, UserIdentity) ConnectAnonymouslyToAnyServerOn(string url)
     {
         var descriptor = new EndpointDescription(url);
         descriptor.UserIdentityTokens.Add(new UserTokenPolicy(UserTokenType.Anonymous));
@@ -77,7 +77,7 @@ public class Client : ICreateSessions
         return (endpoint, identity);
     }
 
-    private static ApplicationConfiguration ConnectorDescription() => new()
+    static ApplicationConfiguration ConnectorDescription() => new()
     {
         ApplicationType = ApplicationType.Client,
 

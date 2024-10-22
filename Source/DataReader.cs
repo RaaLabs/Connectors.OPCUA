@@ -14,12 +14,12 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class DataReader : IRetrieveData
 {
-    private readonly TimeSpan _publishInterval;
-    private readonly List<(NodeId, TimeSpan)> _subscribeNodes;
-    private readonly List<(NodeId, TimeSpan)> _readNodes;
-    private readonly ICanSubscribeToNodes _subscriber;
-    private readonly ICanReadNodes _reader;
-    private readonly ILogger _logger;
+    readonly TimeSpan _publishInterval;
+    readonly List<(NodeId, TimeSpan)> _subscribeNodes;
+    readonly List<(NodeId, TimeSpan)> _readNodes;
+    readonly ICanSubscribeToNodes _subscriber;
+    readonly ICanReadNodes _reader;
+    readonly ILogger _logger;
 
     public DataReader(ConnectorConfiguration config, ICanSubscribeToNodes subscriber, ICanReadNodes reader, ILogger logger)
     {
@@ -74,21 +74,21 @@ public class DataReader : IRetrieveData
         }
     }
 
-    private Task SubscribeOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
+    Task SubscribeOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
         _subscribeNodes.Count switch
         {
             0 => Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken),
             _ => Task.Run(() => _subscriber.SubscribeToChangesFor(connection, _publishInterval, _subscribeNodes, handleValue, cancellationToken), cancellationToken)
         };
 
-    private Task ReadOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
+    Task ReadOrSleep(ISession connection, Func<NodeValue, Task> handleValue, CancellationToken cancellationToken) =>
         _readNodes.Count switch
         {
             0 => Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken),
             _ => Task.Run(() => _reader.ReadNodesForever(connection, _readNodes, handleValue, cancellationToken), cancellationToken)
         };
 
-    private static void ThrowIfFailedWithError(Task task)
+    static void ThrowIfFailedWithError(Task task)
     {
         if (task.Exception?.GetBaseException() is {} error and not OperationCanceledException)
         {
