@@ -34,9 +34,6 @@ jobs:
     - name: Test and report coverage
       run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover
 
-    - uses: actions/checkout@v4
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
     - uses: mathieudutour/github-tag-action@v6.2
       name: Calculate next version and create tag on GitHub
       id: tag
@@ -47,21 +44,21 @@ jobs:
         release_branches: ${{ inputs.branches }}
         dry_run: ${{ env.RELEASE != 'true' }}
 
-    - name: Docker Build
-      uses: docker/build-push-action@v5
-      if: ${{ steps.context.outputs.should-publish == 'false' }}
+    - name: Build Docker image
+      uses: docker/build-push-action@v6
       with:
         push: false
         no-cache: true
         context: .
-        file: ./Source/Dockerfile
-        build-args: |
-          CONFIGURATION=Release
+        file: ${{ inputs.dockerfile || 'Source/Dockerfile' }}
         secrets: |
           NUGET_GITHUB_PACKAGES_USERNAME=${{ secrets.NUGET_GITHUB_PACKAGES_USERNAME }}
           NUGET_GITHUB_PACKAGES_TOKEN=${{ secrets.NUGET_GITHUB_PACKAGES_TOKEN }}
+        load: true
         platforms: linux/amd64
-        tags: ${{ env.DOCKER_IMAGE_REGISTRY_PATH }}:latest
+        tags: image:local
+        build-args: |
+          BUILD_VERSION=${{ steps.tag.outputs.new_version }}
 
     - name: Apply version tag to Docker images
       id: references
