@@ -12,12 +12,11 @@ jobs:
   ci:
     name: 'build'
     runs-on: ubuntu-latest
+    env:
+      RELEASE: ${{ github.event_name == 'push' && contains(inputs.branches || 'main,master', github.ref_name) }}
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
     - uses: docker/setup-qemu-action@v3
     - uses: docker/setup-buildx-action@v3
 
@@ -31,6 +30,9 @@ jobs:
     - name: Test and report coverage
       run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover
 
+    - uses: actions/checkout@v4
+    - uses: docker/setup-qemu-action@v3
+    - uses: docker/setup-buildx-action@v3
     - uses: mathieudutour/github-tag-action@v6.2
       name: Calculate next version and create tag on GitHub
       id: tag
