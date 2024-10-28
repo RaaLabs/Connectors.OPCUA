@@ -64,7 +64,7 @@ jobs:
       id: references
       run: |
         echo ${{ github.event_name }}
-        IMAGES=$(tr "," "\n" <<<"${{ inputs.images }}" | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")
+        IMAGES=$(tr "," "\n" <<<"${{ env.DOCKER_IMAGE_REGISTRY_PATH }}" | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")
         echo -e "Images to tag:\n$IMAGES"
         REFS=$(sed "s/$/:v${{ steps.tag.outputs.new_version }}/" <<<"$IMAGES" | paste -sd "," -)
         echo -e "References: $REFS"
