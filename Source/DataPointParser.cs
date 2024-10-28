@@ -10,10 +10,10 @@ namespace RaaLabs.Edge.Connectors.OPCUA;
 
 public class DataPointParser : ICreateDatapointsFromDataValues
 {
-    private readonly ConnectorConfiguration _configuration;
-    private readonly ILogger _logger;
-    private readonly IMetricsHandler _metrics;
-    private readonly TimeProvider _clock;
+    readonly ConnectorConfiguration _configuration;
+    readonly ILogger _logger;
+    readonly IMetricsHandler _metrics;
+    readonly TimeProvider _clock;
 
     public DataPointParser(ConnectorConfiguration configuration, ILogger logger, IMetricsHandler metrics, TimeProvider clock)
     {
@@ -38,7 +38,7 @@ public class DataPointParser : ICreateDatapointsFromDataValues
         };
     }
 
-    private void LogWarningIfStatusCodeIsNotGood(NodeValue nodeValue)
+    void LogWarningIfStatusCodeIsNotGood(NodeValue nodeValue)
     {
         if (StatusCode.IsGood(nodeValue.Value.StatusCode) && StatusCode.IsNotBad(nodeValue.Value.StatusCode)) return;
 
@@ -46,7 +46,7 @@ public class DataPointParser : ICreateDatapointsFromDataValues
         _metrics.NumberOfBadStatusCodesFor(1, nodeValue.Node.ToString()!);
     }
 
-    private void LogWarningIfFaultyTimestamp(NodeValue nodeValue, DateTime timestamp, string timestampType)
+    void LogWarningIfFaultyTimestamp(NodeValue nodeValue, DateTime timestamp, string timestampType)
     {
         var dateTimeOffset = (DateTimeOffset) timestamp;
         var utcNow = _clock.GetUtcNow();
