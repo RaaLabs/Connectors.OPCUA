@@ -1,7 +1,11 @@
 name: 'dotnet build'
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    types: [ closed ]
     
 env:
   PRERELEASE_BRANCHES: experimental,alpha,beta,rc
