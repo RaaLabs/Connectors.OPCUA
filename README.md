@@ -31,69 +31,6 @@ The module is configured using a JSON file. `connector.json` represents the conn
 }
 ```
 
-## IoT Edge Deployment
-
-### $edgeAgent
-
-In your `deployment.json` file, you will need to add the module. For more details on modules in IoT Edge, go [here](https://docs.microsoft.com/en-us/azure/iot-edge/module-composition).
-
-The module has persistent state and it is assuming that this is in the `config` folder relative to where the binary is running.
-Since this is running in a containerized environment, the state is not persistent between runs. To get this state persistent, you'll
-need to configure the deployment to mount a folder on the host into the config folder.
-
-In your `deployment.json` file where you added the module, inside the `HostConfig` property, you should add the volume binding.
-
-```json
-"Mounts": [
-   {
-        "Type": "volume",
-        "Source": "raalabs-config-opcua",
-        "Target": "/app/config",
-        "RW": false
-    }
-]
-```
-
-```json
-{
-    "modulesContent": {
-        "$edgeAgent": {
-            "properties.desired.modules.OPCUA": {
-                "settings": {
-                    "image": "<repo-name>/connectors-opcua:<tag>",
-                    "createOptions": {
-                        "HostConfig": {
-                            "Mounts": [
-                                {
-                                    "Type": "volume",
-                                    "Source": "raalabs-config-opcua",
-                                    "Target": "/app/config",
-                                    "RW": false
-                                }]}
-                },
-                "type": "docker",
-                "version": "1.0",
-                "status": "running",
-                "restartPolicy": "always"
-            }
-        }
-    }
-}
-```
-
-### $edgeHub
-
-The routes in edgeHub can be specified like the example below.
-
-```json
-{
-    "$edgeHub": {
-        "properties.desired.routes.OPCUAToIdentityMapper": "FROM /messages/modules/OPCUA/outputs/output INTO BrokeredEndpoint(\"/modules/IdentityMapper/inputs/events\")",
-    }
-}
-```
-
-
 ## Testing using Prosys OPC UA Simulation Server
 Prosys offers a free simulation server, which can be downloaded here: <https://downloads.prosysopc.com/opc-ua-simulation-server-downloads.php>.
 
