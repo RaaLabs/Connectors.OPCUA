@@ -8,7 +8,7 @@ on:
       - 'MockServer/**'
 
 env:
-  IMAGES: raaedge.azurecr.io/opcua-test-server
+  IMAGES: ${{ secrets.RAAEDGE_LOGIN_SERVER }}/opcua-test-server
   COVERAGE_FOLDER: Coverage
 
 jobs:
