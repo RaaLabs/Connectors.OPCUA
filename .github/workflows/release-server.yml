@@ -13,7 +13,7 @@ env:
 
 jobs:
   ci:
-    name: 'build'
+    name: 'Release OPCUA server'
     runs-on: ubuntu-latest
     env:
       RELEASE: ${{ github.event_name == 'push' && contains('main,master', github.ref_name) }}
