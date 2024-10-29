@@ -32,6 +32,22 @@ jobs:
           fetch_all_tags: true
           dry_run: ${{ env.RELEASE != 'true' }}
           release_branches: ${{ inputs.branches }}
+          
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          no-cache: true
+          context: .
+          file: 'MockServer/Dockerfile.Server'
+          secrets: |
+            NUGET_GITHUB_PACKAGES_USERNAME=${{ secrets.NUGET_GITHUB_PACKAGES_USERNAME }}
+            NUGET_GITHUB_PACKAGES_TOKEN=${{ secrets.NUGET_GITHUB_PACKAGES_TOKEN }}
+          load: true
+          platforms: linux/amd64
+          tags: image:local
+          build-args: |
+            BUILD_VERSION=${{ steps.tag.outputs.new_version }}
 
       - name: Apply version tag to Docker images
         id: references
