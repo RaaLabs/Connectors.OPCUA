@@ -31,6 +31,7 @@ jobs:
           tag_prefix: ${{ inputs.component && format('server/v',inputs.component) || 'server/v' }}
           fetch_all_tags: true
           dry_run: ${{ env.RELEASE != 'true' }}
+          release_branches: ${{ inputs.branches }}
 
       - name: Apply version tag to Docker images
         id: references
