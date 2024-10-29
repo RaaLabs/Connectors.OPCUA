@@ -9,7 +9,7 @@ docker run --name opcuaserver --network my-net -p 4840:4840 docker.io/library/op
 docker run --network my-net docker.io/library/opcua-test-client
 ````
 
-Config for OPCUA connector:
+Config for OPCUA connector (the host used in the serverUrl must match the name given to the Docker container):
 ````json
 {
     "serverUrl": "opc.tcp://opcua-test-server:4840/freeopcua/server/",
