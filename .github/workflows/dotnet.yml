@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '**'
+    paths-ignore:
+      - 'MockServer/**'
   pull_request:
     types: [ closed ]
     
