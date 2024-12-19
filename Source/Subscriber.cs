@@ -50,7 +50,7 @@ public class Subscriber : ICanSubscribeToNodes
         _metrics.SubscriptionSetupTime(timer.Elapsed.TotalSeconds);
 
         _logger.Debug("Starting to read values from subscription");
-        await foreach (var value in channel.Reader.ReadAllAsync(CancellationToken.None))
+        await foreach (var value in channel.Reader.ReadAllAsync(CancellationToken.None).ConfigureAwait(false))
         {
             _logger.Verbose("Received value {Value} from subscription", value);
             _metrics.NumberOfReceivedMonitorNotifications(1);
