@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Machine.Specifications;
 using Moq;
 using Opc.Ua;
@@ -24,9 +25,12 @@ public class and_exception_thrown_from_readvalueasync : given.a_reader
         ];
 
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .Callback<NodeId, CancellationToken>((_, cancellation_token) => ct = cancellation_token)
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(321)), Moq.It.IsAny<CancellationToken>()))
+            .Callback<RequestHeader, double, TimestampsToReturn, ReadValueIdCollection, CancellationToken>((_, __, ___, ____, cancellation_token) => ct = cancellation_token)
             .ThrowsAsync(new Exception("This is an exception"));
+        connection
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(111)), Moq.It.IsAny<CancellationToken>()))
+            .Returns<RequestHeader, double, TimestampsToReturn, ReadValueIdCollection, CancellationToken>(async (_, __, ___, ____, token) => { await Task.Delay(Timeout.Infinite, token); return null!; });
     };
 
     static Exception exception;

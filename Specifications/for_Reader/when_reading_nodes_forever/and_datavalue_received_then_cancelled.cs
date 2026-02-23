@@ -22,9 +22,9 @@ public class and_datavalue_received_then_cancelled : given.a_reader
         nodes = [(new NodeId(321), TimeSpan.FromSeconds(1))];
 
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .Callback(() => cancellation_token_source.Cancel())
-            .ReturnsAsync(new DataValue("reading value"));
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(321)), Moq.It.IsAny<CancellationToken>()))
+            .Callback<RequestHeader, double, TimestampsToReturn, ReadValueIdCollection, CancellationToken>((_, __, ___, ____, _____) => cancellation_token_source.Cancel())
+            .ReturnsAsync(new ReadResponse { Results = new DataValueCollection { new DataValue("reading value") } });
         
         handled_values = [];
         

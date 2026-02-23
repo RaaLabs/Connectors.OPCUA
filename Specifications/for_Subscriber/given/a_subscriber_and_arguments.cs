@@ -69,6 +69,21 @@ public class a_subscriber_and_arguments
                     new(),
                 ],
             });
+        session
+            .Setup(_ => _.SetPublishingModeAsync(
+                Moq.It.IsAny<RequestHeader>(),
+                Moq.It.IsAny<bool>(),
+                Moq.It.IsAny<UInt32Collection>(),
+                Moq.It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(new SetPublishingModeResponse() { Results = new StatusCodeCollection { StatusCodes.Good } });
+        session
+            .Setup(_ => _.DeleteSubscriptionsAsync(
+                Moq.It.IsAny<RequestHeader>(),
+                Moq.It.IsAny<UInt32Collection>(),
+                Moq.It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(new DeleteSubscriptionsResponse() { Results = new StatusCodeCollection { StatusCodes.Good } });
 
         var values = handled_values = [];
         handler = _ => 

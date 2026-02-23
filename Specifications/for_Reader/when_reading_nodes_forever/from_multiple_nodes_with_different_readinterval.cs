@@ -26,15 +26,15 @@ public class from_multiple_nodes_with_different_readinterval : given.a_reader
         ];
 
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new DataValue("value 1"));
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(321)), Moq.It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ReadResponse { Results = new DataValueCollection { new DataValue("value 1") } });
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(231), Moq.It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new DataValue("value 2"));
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(231)), Moq.It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ReadResponse { Results = new DataValueCollection { new DataValue("value 2") } });
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(111), Moq.It.IsAny<CancellationToken>()))
-            .Callback(() => cancellation_token_source.Cancel())
-            .ReturnsAsync(new DataValue("value 3"));
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(111)), Moq.It.IsAny<CancellationToken>()))
+            .Callback<RequestHeader, double, TimestampsToReturn, ReadValueIdCollection, CancellationToken>((_, __, ___, ____, _____) => cancellation_token_source.Cancel())
+            .ReturnsAsync(new ReadResponse { Results = new DataValueCollection { new DataValue("value 3") } });
         
         handled_values = [];
         

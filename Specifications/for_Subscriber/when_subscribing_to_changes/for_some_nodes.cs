@@ -22,14 +22,10 @@ public class for_some_nodes : given.a_subscriber_and_arguments
         CancellationToken.None
     );
 
-    It should_create_a_subscription_with_publishing_enabled_and_the_correct_interval = () => session.Verify(_ => _.CreateSubscriptionAsync(
+    It should_create_a_subscription_with_publishing_enabled_and_the_correct_interval = () => session.Verify(_ => _.SetPublishingModeAsync(
         Moq.It.IsAny<RequestHeader>(),
-        1,
-        Moq.It.IsAny<uint>(),
-        Moq.It.IsAny<uint>(),
-        Moq.It.IsAny<uint>(),
         true,
-        Moq.It.IsAny<byte>(),
+        Moq.It.IsAny<UInt32Collection>(),
         Moq.It.IsAny<CancellationToken>()
     ));
     It should_create_monitored_items_for_the_two_nodes = () => session.Verify(_ => _.CreateMonitoredItemsAsync(
