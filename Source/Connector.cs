@@ -36,7 +36,7 @@ public class Connector : IRunAsync, IProduceEvent<OpcuaDatapointOutput>
             try
             {
                 _logger.Information("Initiating connection to server");
-                var connection = await _sessions.ConnectToServer(CancellationToken.None).ConfigureAwait(false);
+                using var connection = await _sessions.ConnectToServer(CancellationToken.None).ConfigureAwait(false);
 
                 _logger.Information("Starting data reader");
                 await _retriever.ReadDataForever(connection, ConvertAndSendDataValue, CancellationToken.None).ConfigureAwait(false);
