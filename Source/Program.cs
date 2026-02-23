@@ -8,6 +8,7 @@ using RaaLabs.Edge.Modules.EdgeHub;
 using RaaLabs.Edge.Modules.Configuration;
 using RaaLabsDiagnostics = RaaLabs.Edge.Modules.Diagnostics.Diagnostics;
 using Autofac;
+using Opc.Ua;
 using Opc.Ua.Client;
 
 namespace RaaLabs.Edge.Connectors.OPCUA;
@@ -27,7 +28,7 @@ static class Program
             .WithManualRegistration(_ =>
             {
                 _.RegisterInstance(TimeProvider.System);
-                _.RegisterInstance(DefaultSessionFactory.Instance).As<ISessionFactory>();
+                _.RegisterInstance(new DefaultSessionFactory(DefaultTelemetry.Create(_ => { }))).As<ISessionFactory>();
                 _.RegisterType<Client>().As<ICreateSessions>();
                 _.RegisterType<DataReader>().As<IRetrieveData>();
                 _.RegisterType<DataPointParser>().As<ICreateDatapointsFromDataValues>();

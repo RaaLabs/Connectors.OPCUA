@@ -24,8 +24,9 @@ public class and_exception_thrown_from_handlevalue : given.a_reader
         ];
 
         connection
-            .Setup(_ => _.ReadValueAsync(new NodeId(321), Moq.It.IsAny<CancellationToken>()))
-            .Callback<NodeId, CancellationToken>((_, cancellation_token) => ct = cancellation_token);
+            .Setup(_ => _.ReadAsync(Moq.It.IsAny<RequestHeader>(), Moq.It.IsAny<double>(), Moq.It.IsAny<TimestampsToReturn>(), Moq.It.Is<ReadValueIdCollection>(c => c.Count == 1 && c[0].NodeId == new NodeId(321)), Moq.It.IsAny<CancellationToken>()))
+            .Callback<RequestHeader, double, TimestampsToReturn, ReadValueIdCollection, CancellationToken>((_, __, ___, ____, cancellation_token) => ct = cancellation_token)
+            .ReturnsAsync(new ReadResponse { Results = new DataValueCollection { new DataValue() } });
 
         handler = _ => throw new Exception("this is an exception");
     };

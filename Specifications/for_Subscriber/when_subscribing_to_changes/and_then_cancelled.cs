@@ -34,10 +34,9 @@ public class and_then_cancelled : given.a_subscriber_and_arguments
         await running_subscriber;
     };
 
-    It should_delete_the_subscription = () => session.Verify(_ => _.DeleteSubscriptions(
+    It should_delete_the_subscription = () => session.Verify(_ => _.DeleteSubscriptionsAsync(
         Moq.It.IsAny<RequestHeader>(),
         Moq.It.Is<UInt32Collection>(_ => _.Count == 1 && _[0] == 1337),
-        out Moq.It.Ref<StatusCodeCollection>.IsAny,
-        out Moq.It.Ref<DiagnosticInfoCollection>.IsAny
+        Moq.It.IsAny<CancellationToken>()
     ));
 }
